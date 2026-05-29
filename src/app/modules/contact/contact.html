@@ -1,0 +1,111 @@
+<div class="min-h-screen bg-background py-12 md:py-24">
+  <div class="container px-4 max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row gap-12">
+      <!-- Información de Contacto -->
+      <div class="md:w-1/3 flex flex-col space-y-6" appAnimateOnScroll animationName="animate-fade-in-up">
+        <div class="space-y-4">
+          <h1 class="text-4xl font-bold tracking-tighter sm:text-5xl font-merriweather text-primary">Contacto</h1>
+          <p class="text-muted-foreground font-light text-lg">
+            ¿Interesado en colaborar, investigar o conocer más sobre nuestros proyectos? Ponte en contacto con REASONS.
+          </p>
+        </div>
+        
+      </div>
+      
+      <!-- Formulario -->
+      <div class="md:w-2/3 bg-card rounded-2xl p-6 md:p-10 shadow-xl border border-border/50" appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="200ms">
+        <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="space-y-6">
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label for="name" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground">Nombre completo *</label>
+              <input id="name" type="text" formControlName="name" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-foreground" placeholder="Ej. Juan Pérez">
+              <p *ngIf="contactForm.get('name')?.touched && contactForm.get('name')?.invalid" class="text-[0.8rem] font-medium text-destructive">Por favor, ingresa tu nombre.</p>
+            </div>
+            
+            <div class="space-y-2">
+              <label for="email" class="text-sm font-medium leading-none text-foreground">Correo electrónico *</label>
+              <input id="email" type="email" formControlName="email" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 text-foreground" placeholder="ejemplo@correo.com">
+              <p *ngIf="contactForm.get('email')?.touched && contactForm.get('email')?.invalid" class="text-[0.8rem] font-medium text-destructive">Por favor, ingresa un email válido.</p>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label for="institution" class="text-sm font-medium leading-none text-foreground">Institución / Empresa</label>
+              <input id="institution" type="text" formControlName="institution" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 text-foreground" placeholder="Universidad, Empresa, etc.">
+            </div>
+            
+            <div class="space-y-2">
+              <label for="subject" class="text-sm font-medium leading-none text-foreground">Asunto *</label>
+              <input id="subject" type="text" formControlName="subject" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 text-foreground" placeholder="Motivo de tu mensaje">
+            </div>
+          </div>
+          
+          <div class="space-y-2">
+            <label for="message" class="text-sm font-medium leading-none text-foreground">Mensaje *</label>
+            <textarea id="message" formControlName="message" rows="5" class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 text-foreground" placeholder="Escribe tu mensaje aquí..."></textarea>
+            <p *ngIf="contactForm.get('message')?.touched && contactForm.get('message')?.invalid" class="text-[0.8rem] font-medium text-destructive">Por favor, ingresa un mensaje de al menos 10 caracteres.</p>
+          </div>
+          
+          <button type="submit" [disabled]="isSubmitting" class="inline-flex items-center justify-center rounded-md text-sm font-bold tracking-wide uppercase transition-all focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 bg-secondary text-white hover:bg-secondary/90 hover:shadow-lg h-12 px-8 w-full md:w-auto">
+            <span *ngIf="isSubmitting" class="material-icons animate-spin mr-2 text-sm">refresh</span>
+            {{ isSubmitting ? 'Enviando...' : 'Enviar Mensaje' }}
+          </button>
+          
+          <div *ngIf="submitSuccess" class="bg-green-50 border-l-4 border-secondary text-green-800 rounded-r-md p-4 flex items-start gap-3 mt-4 transition-all">
+            <span class="material-icons text-secondary">check_circle</span>
+            <p class="text-sm">¡Tu mensaje ha sido enviado con éxito! Nos pondremos en contacto contigo pronto.</p>
+          </div>
+          
+        </form>
+      </div>
+    </div>
+    
+    <!-- Map Section -->
+    <div class="mt-16 md:mt-24 pt-16 border-t border-border">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Info Cards -->
+        <div class="lg:col-span-1 space-y-6">
+          <div appAnimateOnScroll animationName="animate-fade-in-up" class="bg-card rounded-xl p-6 shadow-sm border-t-4 border-secondary flex flex-col items-start gap-4 hover:shadow-md transition-shadow">
+            <div class="flex items-center gap-3">
+              <span class="material-icons text-secondary text-2xl">location_on</span>
+              <h4 class="font-bold text-primary text-xl font-merriweather">Dirección</h4>
+            </div>
+            <p class="text-sm text-muted-foreground leading-relaxed pl-9">
+              Av. de Los Chasquis y Av. Río Payamino.<br>
+              Facultad de Ingeniería en Sistemas, Electrónica e Industrial.<br>
+              Universidad Técnica de Ambato. Ambato - Ecuador.
+            </p>
+          </div>
+          
+          <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="200ms" class="bg-card rounded-xl p-6 shadow-sm border-t-4 border-secondary flex flex-col items-start gap-4 hover:shadow-md transition-shadow">
+            <div class="flex items-center gap-3">
+              <span class="material-icons text-secondary text-2xl">mail</span>
+              <h4 class="font-bold text-primary text-xl font-merriweather">Correo electrónico</h4>
+            </div>
+            <p class="text-sm text-muted-foreground leading-relaxed pl-9">
+              <a href="mailto:reasons@uta.edu.ec" class="hover:text-secondary transition-colors">reasons@uta.edu.ec</a>
+            </p>
+          </div>
+        </div>
+        
+        <!-- Google Maps Iframe -->
+        <div appAnimateOnScroll animationName="animate-zoom-in" animationDelay="300ms" class="lg:col-span-2 rounded-2xl overflow-hidden shadow-lg border border-border bg-card h-[400px]">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.281896081395!2d-78.62916892404557!3d-1.2721115356165814!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91d38221b2d7085b%3A0xc3cf2ce5debb0799!2sUniversidad%20T%C3%A9cnica%20de%20Ambato%20-%20Campus%20Huachi!5e0!3m2!1ses!2sec!4v1700000000000!5m2!1ses!2sec" 
+            width="100%" 
+            height="100%" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+</div>

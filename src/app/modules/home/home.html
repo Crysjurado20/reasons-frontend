@@ -1,0 +1,200 @@
+<!-- Hero Section -->
+<section class="relative w-full py-20 md:py-32 lg:py-48 overflow-hidden bg-primary text-primary-foreground border-b-8 border-secondary bg-[url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat bg-fixed">
+  <!-- Overlay to maintain readability -->
+  <div class="absolute inset-0 bg-primary/85 mix-blend-multiply"></div>
+  <!-- Decorative Animated Background Elements -->
+  <div class="absolute inset-0 bg-pattern-dots opacity-20"></div>
+  
+  <!-- Animated SVG connecting lines -->
+  <svg class="absolute inset-0 w-full h-full opacity-30 pointer-events-none" preserveAspectRatio="none">
+    <path class="animate-draw-line" d="M0,100 C150,200 350,0 500,100 C700,200 900,50 1200,150" stroke="var(--secondary)" stroke-width="4" fill="none" stroke-dasharray="1000" stroke-dashoffset="1000"/>
+    <path class="animate-draw-line" style="animation-delay: 1s;" d="M0,300 C200,400 400,100 600,200 C800,300 1000,150 1200,250" stroke="var(--secondary)" stroke-width="2" fill="none" stroke-dasharray="1000" stroke-dashoffset="1000"/>
+  </svg>
+
+  <!-- Floating Blobs -->
+  <div class="animate-blob absolute -right-20 -top-20 w-[400px] h-[400px] bg-secondary/30 rounded-full blur-3xl mix-blend-screen pointer-events-none"></div>
+  <div class="animate-blob absolute -left-20 -bottom-20 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-3xl mix-blend-screen pointer-events-none" style="animation-delay: 2s;"></div>
+
+  <div class="container relative px-4 md:px-6 max-w-7xl mx-auto z-10">
+    <div class="flex flex-col items-center space-y-6 text-center">
+      <div class="space-y-4">
+        <h1 appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="100ms" class="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl font-merriweather text-white drop-shadow-lg">
+          Industrial Management and <br class="hidden md:block"/>
+          <span class="text-secondary">Innovation Research</span>
+        </h1>
+        <p appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="300ms" class="mx-auto max-w-[800px] text-primary-foreground/90 text-lg md:text-2xl font-light tracking-wide">
+          Research in Engineering and Advanced Sustainable Operations, Nature, and Society.
+        </p>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-4 pt-8 w-full justify-center">
+        <a appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="500ms" routerLink="/proyectos" class="inline-flex h-14 items-center justify-center rounded-md bg-secondary px-10 text-lg font-bold text-white shadow-xl transition-all duration-300 hover:bg-secondary/90 hover:scale-105 hover:shadow-secondary/30">
+          Proyectos
+        </a>
+        <a appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="600ms" routerLink="/investigadores" class="inline-flex h-14 items-center justify-center rounded-md border-2 border-white/20 bg-white/10 backdrop-blur-md px-10 text-lg font-bold text-white shadow-xl transition-all duration-300 hover:bg-white/20 hover:scale-105">
+          Quiénes Somos
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Areas Section -->
+<section class="w-full py-16 md:py-24 bg-background border-b border-border relative">
+  <div class="container px-4 md:px-6 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      
+      <!-- Feature 1 -->
+      <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="100ms" class="flex flex-col items-center md:items-start p-6 bg-card rounded-2xl shadow-lg border border-border/50 hover:-translate-y-2 transition-transform duration-300 group">
+        <div class="text-5xl font-merriweather font-black text-secondary/20 group-hover:text-secondary/40 transition-colors mb-2">01</div>
+        <div class="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary transition-colors duration-300">
+          <span class="material-icons text-3xl text-primary group-hover:text-white transition-colors duration-300">local_shipping</span>
+        </div>
+        <h4 class="text-xl font-bold font-merriweather text-foreground mb-3 text-center md:text-left">Cadena de Suministro<br>y Logística</h4>
+        <p class="text-muted-foreground text-sm leading-relaxed text-center md:text-left">Análisis y optimización integral de procesos logísticos y flujos de abastecimiento.</p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="300ms" class="flex flex-col items-center md:items-start p-6 bg-card rounded-2xl shadow-lg border border-border/50 hover:-translate-y-2 transition-transform duration-300 group">
+        <div class="text-5xl font-merriweather font-black text-secondary/20 group-hover:text-secondary/40 transition-colors mb-2">02</div>
+        <div class="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary transition-colors duration-300">
+          <span class="material-icons text-3xl text-primary group-hover:text-white transition-colors duration-300">precision_manufacturing</span>
+        </div>
+        <h4 class="text-xl font-bold font-merriweather text-foreground mb-3 text-center md:text-left">Quinta Revolución<br>Industrial</h4>
+        <p class="text-muted-foreground text-sm leading-relaxed text-center md:text-left">La industria 5.0, integrando el potencial humano con tecnologías avanzadas sostenibles.</p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="500ms" class="flex flex-col items-center md:items-start p-6 bg-card rounded-2xl shadow-lg border border-border/50 hover:-translate-y-2 transition-transform duration-300 group">
+        <div class="text-5xl font-merriweather font-black text-secondary/20 group-hover:text-secondary/40 transition-colors mb-2">03</div>
+        <div class="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary transition-colors duration-300">
+          <span class="material-icons text-3xl text-primary group-hover:text-white transition-colors duration-300">groups</span>
+        </div>
+        <h4 class="text-xl font-bold font-merriweather text-foreground mb-3 text-center md:text-left">Responsabilidad Social<br>Empresarial</h4>
+        <p class="text-muted-foreground text-sm leading-relaxed text-center md:text-left">Impacto positivo en la sociedad y el entorno a través de políticas corporativas éticas.</p>
+      </div>
+
+      <!-- Feature 4 -->
+      <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="700ms" class="flex flex-col items-center md:items-start p-6 bg-card rounded-2xl shadow-lg border border-border/50 hover:-translate-y-2 transition-transform duration-300 group">
+        <div class="text-5xl font-merriweather font-black text-secondary/20 group-hover:text-secondary/40 transition-colors mb-2">04</div>
+        <div class="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary transition-colors duration-300">
+          <span class="material-icons text-3xl text-primary group-hover:text-white transition-colors duration-300">eco</span>
+        </div>
+        <h4 class="text-xl font-bold font-merriweather text-foreground mb-3 text-center md:text-left">Sostenibilidad<br>Empresarial</h4>
+        <p class="text-muted-foreground text-sm leading-relaxed text-center md:text-left">Prácticas operativas enfocadas en la viabilidad ecológica y la eficiencia de recursos a largo plazo.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Impact Stats Section -->
+<section class="relative w-full py-24 md:py-32 bg-primary overflow-hidden border-b border-border/20 bg-[url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat bg-fixed">
+  <!-- Minimalist Glow and Dark Overlay -->
+  <div class="absolute inset-0 bg-[#0F2027]/90 mix-blend-multiply"></div>
+  <div class="absolute inset-0 bg-primary/80"></div>
+  
+  <div class="container relative z-10 px-4 md:px-6 max-w-7xl mx-auto">
+    <div class="text-center mb-16" appAnimateOnScroll animationName="animate-fade-in-up">
+      <h2 class="text-3xl md:text-5xl font-merriweather font-bold text-white mb-4">Nuestro Impacto</h2>
+      <p class="text-white/70 text-lg max-w-2xl mx-auto font-light">
+        Avanzando en la frontera del conocimiento con resultados tangibles en la industria y academia.
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 text-center">
+      <!-- Stat 1 -->
+      <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="100ms" class="flex flex-col items-center justify-center p-10 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+        <span class="material-icons text-4xl text-secondary mb-4">account_tree</span>
+        <h3 class="text-5xl md:text-6xl font-black text-white font-spaceGrotesk tracking-tighter mb-2">15+</h3>
+        <p class="text-white/80 font-bold text-xs uppercase tracking-widest mt-2">Proyectos Activos</p>
+      </div>
+      
+      <!-- Stat 2 -->
+      <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="300ms" class="flex flex-col items-center justify-center p-10 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+        <span class="material-icons text-4xl text-secondary mb-4">groups</span>
+        <h3 class="text-5xl md:text-6xl font-black text-white font-spaceGrotesk tracking-tighter mb-2">24</h3>
+        <p class="text-white/80 font-bold text-xs uppercase tracking-widest mt-2">Investigadores</p>
+      </div>
+      
+      <!-- Stat 3 -->
+      <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="500ms" class="flex flex-col items-center justify-center p-10 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+        <span class="material-icons text-4xl text-secondary mb-4">menu_book</span>
+        <h3 class="text-5xl md:text-6xl font-black text-white font-spaceGrotesk tracking-tighter mb-2">50+</h3>
+        <p class="text-white/80 font-bold text-xs uppercase tracking-widest mt-2">Publicaciones</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Content Section -->
+<section class="w-full py-16 md:py-32 bg-accent/30 overflow-hidden">
+  <div class="container px-4 md:px-6 max-w-7xl mx-auto">
+    <div class="grid max-w-7xl mx-auto items-center gap-12 lg:grid-cols-2">
+      
+      <!-- Photo Collage Section (Moved to Left) -->
+      <div appAnimateOnScroll animationName="animate-zoom-in" animationDelay="100ms" class="relative w-full h-[600px] flex items-center justify-center lg:order-first">
+        
+        <!-- Decorative Dots Background -->
+        <div class="absolute -top-10 -left-10 w-48 h-48 bg-pattern-dots opacity-50 z-0"></div>
+        <div class="absolute -bottom-10 -right-10 w-48 h-48 bg-pattern-dots opacity-50 z-0"></div>
+
+        <!-- Animated SVG Line -->
+        <svg class="absolute inset-0 w-full h-full z-0 overflow-visible pointer-events-none" viewBox="0 0 500 500">
+          <path class="animate-draw-line" d="M100,250 C200,200 300,300 400,250" stroke="var(--secondary)" stroke-width="4" fill="none" stroke-dasharray="1000" stroke-dashoffset="1000" stroke-linecap="round"/>
+          <path class="animate-draw-line" style="animation-delay: 1.5s;" d="M250,100 C300,250 200,350 250,500" stroke="var(--secondary)" stroke-width="4" fill="none" stroke-dasharray="1000" stroke-dashoffset="1000" stroke-linecap="round"/>
+        </svg>
+
+        <!-- Collage Images -->
+        <div class="relative w-full h-full z-10 flex flex-col justify-center gap-4 p-8">
+           <!-- Top row -->
+           <div class="flex gap-4 h-[45%] w-full">
+             <div class="w-3/5 rounded-3xl overflow-hidden shadow-xl border-4 border-background animate-float" style="animation-delay: 0s;">
+               <img src="assets/images/image1.jpeg" alt="Equipo" class="w-full h-full object-cover">
+             </div>
+             <div class="w-2/5 rounded-3xl overflow-hidden shadow-xl border-4 border-background animate-float" style="animation-delay: 1s;">
+               <img src="assets/images/image2.jpeg" alt="Investigadores" class="w-full h-full object-cover">
+             </div>
+           </div>
+           <!-- Bottom row -->
+           <div class="flex gap-4 h-[45%] w-full">
+             <div class="w-2/5 rounded-3xl overflow-hidden shadow-xl border-4 border-background animate-float" style="animation-delay: 0.5s;">
+               <img src="assets/images/image4.jpeg" alt="Detalle" class="w-full h-full object-cover">
+             </div>
+             <div class="w-3/5 rounded-3xl overflow-hidden shadow-xl border-4 border-background animate-float" style="animation-delay: 1.5s;">
+               <img src="assets/images/image3.jpg" alt="Colaboración" class="w-full h-full object-cover">
+             </div>
+           </div>
+        </div>
+      </div>
+
+      <!-- Text Section (Moved to Right) -->
+      <div class="flex flex-col justify-center space-y-6">
+        <div class="space-y-4" appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="200ms">
+          <div class="flex items-center gap-2 text-primary font-bold tracking-wide uppercase text-sm mb-2">
+            <span class="material-icons text-secondary text-base">check</span> Acerca de Nosotros
+          </div>
+          <h2 class="text-3xl font-black sm:text-4xl lg:text-5xl font-merriweather text-foreground leading-tight">
+            ¿Qué es <span class="text-primary">REASONS</span> ?
+          </h2>
+          <p class="text-muted-foreground text-base leading-relaxed text-justify mt-4">
+            <strong class="text-primary">REASONS</strong> <i>Research in Engineering and Advanced Sustainable Operations, Nature, and Society</i>, es un equipo de investigación multidisciplinario de la Universidad Técnica de Ambato, que acoge a Docentes Investigadores de la Facultad de Ingeniería en Sistemas, Electrónica e Industrial, además de colaboradores internacionales. Adicionalmente cuenta con estudiantes de pre-grado y maestría.
+          </p>
+        </div>
+        
+        <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="300ms" class="flex items-start gap-4 mt-6">
+          <div class="bg-primary/5 p-3 rounded-full text-secondary">
+            <span class="material-icons text-3xl">verified</span>
+          </div>
+          <p class="text-foreground font-bold text-base leading-snug pt-2">
+            Tenemos amplia experiencia desarrollando proyectos de investigación desde la Academia.
+          </p>
+        </div>
+        
+        <p appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="400ms" class="text-muted-foreground text-sm leading-relaxed text-justify mt-4">
+          Nuestros proyectos han resultado ganadores en convocatorias organizadas por la Dirección de Investigación de la Universidad Técnica de Ambato, no solo por su impacto en el desarrollo investigativo, sino por su aporte al negocio; empresa; desarrollo económico y social; gestión al sector productivo e industrial.
+        </p>
+      </div>
+      
+    </div>
+  </div>
+</section>

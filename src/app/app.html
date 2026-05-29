@@ -1,0 +1,12 @@
+<!-- Main App Content -->
+<div class="min-h-screen flex flex-col bg-background text-foreground">
+  <app-navbar *ngIf="isPublicRoute()"></app-navbar>
+  
+  <main class="flex-grow">
+    <router-outlet></router-outlet>
+  </main>
+  
+  <app-footer *ngIf="isPublicRoute()"></app-footer>
+  <app-alerts></app-alerts>
+  <app-confirm-dialog></app-confirm-dialog>
+</div>

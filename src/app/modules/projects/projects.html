@@ -1,0 +1,52 @@
+<div class="min-h-screen bg-background py-12 md:py-24">
+  <div class="container px-4 max-w-7xl mx-auto">
+    <div appAnimateOnScroll animationName="animate-fade-in-up" class="flex flex-col space-y-4 mb-12">
+      <h1 class="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl font-merriweather text-primary">Proyectos de Investigación</h1>
+      <p class="max-w-[700px] text-muted-foreground md:text-xl font-light">
+        Conoce los proyectos en curso y los resultados de nuestras investigaciones recientes.
+      </p>
+    </div>
+    
+    <div class="space-y-8">
+      <div *ngFor="let project of projects; let i = index" appAnimateOnScroll animationName="animate-slide-in-right" [animationDelay]="i * 150 + 'ms'" class="rounded-2xl border border-border bg-card text-card-foreground shadow-lg overflow-hidden hover:border-secondary/50 hover:shadow-xl transition-all duration-300">
+        <div class="p-6 md:p-8">
+          <div class="flex flex-col md:flex-row justify-between md:items-start gap-4 mb-4">
+            <h3 class="font-bold text-3xl font-merriweather text-primary">{{ project.title }}</h3>
+            <span [ngClass]="project.status === 'Activo' ? 'bg-secondary text-white' : 'bg-muted text-muted-foreground'" class="inline-flex items-center self-start rounded-full px-4 py-1 text-sm font-semibold tracking-wide uppercase shadow-sm">
+              {{ project.status }}
+            </span>
+          </div>
+          <p class="text-muted-foreground mb-6 text-lg">
+            {{ project.description }}
+          </p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-primary/5 rounded-xl p-6 border border-primary/10">
+              <h4 class="font-semibold mb-4 flex items-center gap-2 text-primary font-merriweather text-lg">
+                <span class="material-icons text-secondary text-2xl">groups</span> Participantes
+              </h4>
+              <ul class="space-y-3 text-sm text-foreground">
+                <li *ngFor="let participant of project.participants" class="flex items-center gap-3">
+                  <span class="material-icons text-secondary text-sm">person</span>
+                  <span class="font-medium">{{ participant }}</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div class="bg-secondary/5 rounded-xl p-6 border border-secondary/10">
+              <h4 class="font-semibold mb-4 flex items-center gap-2 text-primary font-merriweather text-lg">
+                <span class="material-icons text-secondary text-2xl">track_changes</span> Objetivos
+              </h4>
+              <ul class="space-y-3 text-sm text-foreground">
+                <li *ngFor="let obj of project.objectives" class="flex items-start gap-3">
+                  <span class="material-icons text-secondary text-sm mt-0.5">adjust</span>
+                  <span class="leading-relaxed">{{ obj }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

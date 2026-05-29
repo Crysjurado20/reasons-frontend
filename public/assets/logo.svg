@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <mask id="gear-mask">
+      <rect width="200" height="200" fill="white" />
+      <circle cx="100" cy="100" r="65" fill="black" />
+    </mask>
+  </defs>
+  <g fill="#163953" mask="url(#gear-mask)">
+    <circle cx="100" cy="100" r="85" />
+    <rect x="82" y="5" width="36" height="190" rx="4" />
+    <rect x="5" y="82" width="190" height="36" rx="4" />
+    <rect x="82" y="5" width="36" height="190" rx="4" transform="rotate(45 100 100)" />
+    <rect x="82" y="5" width="36" height="190" rx="4" transform="rotate(-45 100 100)" />
+  </g>
+  <path fill="#4BAE4F" d="M80 155 C30 155 35 100 45 65 C55 30 100 40 145 40 C190 40 165 95 155 130 C145 165 110 155 80 155 Z" />
+  <path d="M60 145 Q110 100 140 50" stroke="white" stroke-width="10" fill="none" stroke-linecap="round" />
+</svg>

@@ -1,0 +1,41 @@
+<div class="min-h-screen bg-background py-12 md:py-24">
+  <div class="container px-4 max-w-7xl mx-auto">
+    <div appAnimateOnScroll animationName="animate-fade-in-up" class="flex flex-col space-y-4 mb-12">
+      <h1 class="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl font-merriweather text-primary">Nuestro Equipo</h1>
+      <p class="max-w-[700px] text-muted-foreground md:text-xl font-light">
+        Conoce a los investigadores y profesionales que forman parte del grupo REASONS.
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div *ngFor="let member of team; let i = index" appAnimateOnScroll animationName="animate-fade-in-up" [animationDelay]="i * 100 + 'ms'" class="relative h-[380px] rounded-sm overflow-hidden flex flex-col group shadow-lg cursor-pointer">
+        
+        <!-- Full Image Background -->
+        <div class="absolute inset-0 w-full h-full bg-primary/20">
+          <img src="assets/images/image{{ (i % 4) + 1 }}.jpeg" alt="{{ member.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+          <!-- Fallback icon if image doesn't load/exist, since we don't have profile pics yet we map to the 4 images we have as placeholders, or just a solid color with icon -->
+        </div>
+        
+        <!-- Dark Gradient Overlay for text readability at bottom -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+        
+        <!-- Floating Label (White Box) -->
+        <div class="absolute bottom-4 left-4 right-4 bg-white p-4 rounded-sm flex flex-col items-center justify-center text-center transform group-hover:-translate-y-2 transition-transform duration-300 shadow-xl border border-gray-100">
+          <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{{ member.position }}</p>
+          <h3 class="font-bold text-lg font-spaceGrotesk text-primary leading-tight">{{ member.name }}</h3>
+          
+          <!-- Hover Links -->
+          <div class="flex items-center justify-center gap-4 mt-3 opacity-0 h-0 group-hover:opacity-100 group-hover:h-auto overflow-hidden transition-all duration-300">
+            <a [href]="member.orcid" target="_blank" class="text-xs font-semibold text-secondary hover:text-primary flex items-center gap-1">
+              <span class="material-icons text-[14px]">link</span> ORCID
+            </a>
+            <a [href]="'mailto:' + member.email" class="text-xs font-semibold text-secondary hover:text-primary flex items-center gap-1">
+              <span class="material-icons text-[14px]">mail</span>
+            </a>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>

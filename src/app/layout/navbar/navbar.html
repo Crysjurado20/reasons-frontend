@@ -1,0 +1,73 @@
+<nav class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  <div class="container flex h-16 items-center max-w-7xl mx-auto px-4">
+
+    <!-- Logo (always visible) -->
+    <a routerLink="/" (click)="closeMenu()" class="flex items-center space-x-2 group mr-auto">
+      <img src="assets/logo.svg" alt="REASONS Logo" class="h-8 w-8 md:h-10 md:w-10 transition-transform group-hover:rotate-45 duration-500">
+      <span class="font-merriweather font-bold text-xl md:text-2xl tracking-tight text-primary">REASONS</span>
+    </a>
+
+    <!-- Desktop Nav Links -->
+    <div class="hidden md:flex items-center gap-6 text-sm font-medium text-foreground mr-6">
+      <a routerLink="/investigadores" routerLinkActive="text-secondary" class="relative group py-1">
+        Investigadores<span class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
+      </a>
+      <a routerLink="/proyectos" routerLinkActive="text-secondary" class="relative group py-1">
+        Proyectos<span class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
+      </a>
+      <a routerLink="/publicaciones" routerLinkActive="text-secondary" class="relative group py-1">
+        Artículos<span class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
+      </a>
+      <a routerLink="/contacto" routerLinkActive="text-secondary" class="relative group py-1">
+        Contacto<span class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
+      </a>
+    </div>
+
+    <!-- Desktop CTA -->
+    <div class="hidden md:flex items-center">
+      <a routerLink="/admin" class="inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2 transition-colors">
+        Acceso Investigador
+      </a>
+    </div>
+
+    <!-- Mobile Hamburger Button -->
+    <button (click)="toggleMenu()" class="md:hidden p-2 rounded-lg text-primary hover:bg-muted transition-colors" aria-label="Toggle menu">
+      <span class="material-icons">{{ mobileMenuOpen() ? 'close' : 'menu' }}</span>
+    </button>
+
+  </div>
+
+  <!-- Mobile Dropdown Menu -->
+  <div *ngIf="mobileMenuOpen()"
+       class="md:hidden border-t border-border/40 bg-background/98 backdrop-blur shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-1">
+      <a routerLink="/investigadores" routerLinkActive="text-secondary bg-muted" (click)="closeMenu()"
+         class="flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-muted transition-colors font-medium">
+        <span class="material-icons text-primary text-xl">groups</span>
+        Investigadores
+      </a>
+      <a routerLink="/proyectos" routerLinkActive="text-secondary bg-muted" (click)="closeMenu()"
+         class="flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-muted transition-colors font-medium">
+        <span class="material-icons text-primary text-xl">lightbulb</span>
+        Proyectos
+      </a>
+      <a routerLink="/publicaciones" routerLinkActive="text-secondary bg-muted" (click)="closeMenu()"
+         class="flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-muted transition-colors font-medium">
+        <span class="material-icons text-primary text-xl">article</span>
+        Artículos
+      </a>
+      <a routerLink="/contacto" routerLinkActive="text-secondary bg-muted" (click)="closeMenu()"
+         class="flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-muted transition-colors font-medium">
+        <span class="material-icons text-primary text-xl">mail</span>
+        Contacto
+      </a>
+      <div class="border-t border-border/40 mt-2 pt-3">
+        <a routerLink="/admin" (click)="closeMenu()"
+           class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors">
+          <span class="material-icons text-xl">login</span>
+          Acceso Investigador
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
