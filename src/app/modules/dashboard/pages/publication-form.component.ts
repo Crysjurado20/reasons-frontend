@@ -1,14 +1,31 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AlertService } from '../../../shared/services/alert.service';
+
+import { MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-publication-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule, 
+    RouterLink,
+    MatChipsModule,
+    MatAutocompleteModule,
+    MatIconModule,
+    MatInputModule,
+    MatFormFieldModule
+  ],
   template: `
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 max-w-3xl mx-auto">
       
@@ -43,13 +60,54 @@ import { AlertService } from '../../../shared/services/alert.service';
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-2">
-            <label class="text-sm font-semibold text-gray-700">Fecha de Publicación <span class="text-red-500">*</span></label>
-            <input type="date" formControlName="publication_date" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all text-gray-700">
+            <label class="text-sm font-semibold text-gray-700">Cita Formateada</label>
+            <input type="text" formControlName="cite" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all text-gray-700" placeholder="Ej. APA Citation">
           </div>
           <div class="space-y-2">
-            <label class="text-sm font-semibold text-gray-700">Enlace DOI (Opcional)</label>
-            <input type="url" formControlName="doi_link" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all" placeholder="https://doi.org/10.1000/xyz123">
+            <label class="text-sm font-semibold text-gray-700">Estado de Publicación</label>
+            <select formControlName="status" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all bg-white">
+              <option value="PUBLISHED">Publicado</option>
+              <option value="IN_REVIEW">En Revisión</option>
+              <option value="DRAFT">Borrador</option>
+            </select>
           </div>
+        </div>
+        
+        <div class="space-y-2">
+            <label class="text-sm font-semibold text-gray-700">URL Portada de Revista (Opcional)</label>
+            <input type="url" formControlName="url_journal_cover" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all" placeholder="https://...">
+        </div>
+
+        <!-- Researchers Autocomplete Chips -->
+        <div class="space-y-4 pt-4 border-t border-gray-100">
+          <label class="text-sm font-semibold text-gray-700">Autores/Investigadores</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-chip-grid #chipGrid aria-label="Selección de investigadores">
+              <mat-chip-row *ngFor="let res of researchers.value; let i = index"
+                            (removed)="removeResearcher(i)">
+                {{ getResearcherName(res.researcher_id) }}
+                <button matChipRemove [attr.aria-label]="'Eliminar'">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip-row>
+              <input placeholder="Buscar investigador..."
+                     #researcherInput
+                     [formControl]="researcherCtrl"
+                     [matChipInputFor]="chipGrid"
+                     [matAutocomplete]="auto">
+            </mat-chip-grid>
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+              <mat-option *ngFor="let res of filteredResearchers | async" [value]="res">
+                <div class="flex items-center gap-2">
+                  <div class="h-6 w-6 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center border border-gray-300">
+                    <img *ngIf="res.url_photo" [src]="res.url_photo" class="h-full w-full object-cover">
+                    <span *ngIf="!res.url_photo" class="material-icons text-[12px] text-gray-400">person</span>
+                  </div>
+                  <span class="text-sm">{{ res.first_name }} {{ res.first_lastname }}</span>
+                </div>
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
         </div>
 
         <div class="pt-6 flex justify-end gap-4 border-t border-gray-100">
@@ -79,12 +137,23 @@ export class PublicationFormComponent implements OnInit {
 
   form: FormGroup = this.fb.group({
     title: ['', Validators.required],
-    abstract: ['', Validators.required],
-    doi_link: [''],
-    publication_date: ['', Validators.required]
+    abstract: [''],
+    cite: [''],
+    status: ['PUBLISHED'],
+    url_journal_cover: [''],
+    researchers: this.fb.array([])
   });
+  
+  researcherCtrl = new FormControl('');
+  allResearchers: any[] = [];
+  filteredResearchers!: Observable<any[]>;
+
+  @ViewChild('researcherInput') researcherInput!: ElementRef<HTMLInputElement>;
+
+  get researchers() { return this.form.get('researchers') as FormArray; }
 
   ngOnInit() {
+    this.loadAllResearchers();
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.isEditing = true;
@@ -93,14 +162,73 @@ export class PublicationFormComponent implements OnInit {
       }
     });
   }
+  
+  loadAllResearchers() {
+    this.http.get<any[]>('http://localhost:3000/api/researchers').subscribe(data => {
+      this.allResearchers = data;
+      this.filteredResearchers = this.researcherCtrl.valueChanges.pipe(
+        startWith(''),
+        map(value => this._filter(value || ''))
+      );
+      this.cdr.detectChanges();
+    });
+  }
+
+  private _filter(value: string | any): any[] {
+    const filterValue = typeof value === 'string' ? value.toLowerCase() : '';
+    const selectedIds = this.researchers.value.map((r: any) => r.researcher_id);
+    return this.allResearchers.filter(res => 
+      !selectedIds.includes(res.id) &&
+      `${res.first_name} ${res.first_lastname}`.toLowerCase().includes(filterValue)
+    );
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    const selectedResearcher = event.option.value;
+    const currentIds = this.researchers.value.map((r: any) => r.researcher_id);
+    
+    if (!currentIds.includes(selectedResearcher.id)) {
+      this.researchers.push(this.fb.group({
+        researcher_id: [selectedResearcher.id, Validators.required]
+      }));
+    }
+    
+    if (this.researcherInput) {
+      this.researcherInput.nativeElement.value = '';
+    }
+    this.researcherCtrl.setValue(null);
+  }
+
+  removeResearcher(index: number): void {
+    this.researchers.removeAt(index);
+    this.researcherCtrl.setValue(this.researcherCtrl.value);
+  }
+
+  getResearcherName(id: number): string {
+    const res = this.allResearchers.find(r => r.id === id);
+    return res ? `${res.first_name} ${res.first_lastname}` : 'Cargando...';
+  }
 
   loadPublication(id: number) {
     this.isLoading = true;
     this.http.get<any>(`http://localhost:3000/api/publications/${id}`).subscribe({
       next: (data) => {
-        if (data.publication_date) data.publication_date = new Date(data.publication_date).toISOString().split('T')[0];
+        this.form.patchValue({
+          title: data.title,
+          abstract: data.abstract,
+          cite: data.cite,
+          status: data.status,
+          url_journal_cover: data.url_journal_cover
+        });
         
-        this.form.patchValue(data);
+        const researchersData = data.researcher_articles || data.researchers;
+        if (researchersData && Array.isArray(researchersData)) {
+          researchersData.forEach((rel: any) => {
+            this.researchers.push(this.fb.group({ researcher_id: [rel.researcher_id, Validators.required] }));
+          });
+        }
+
+        this.researcherCtrl.setValue(this.researcherCtrl.value);
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -119,29 +247,27 @@ export class PublicationFormComponent implements OnInit {
     }
 
     this.isSubmitting = true;
-    const token = localStorage.getItem('auth_token');
-    const headers = { Authorization: `Bearer ${token}` };
     const payload = this.form.value;
 
     if (this.isEditing) {
-      this.http.put(`http://localhost:3000/api/publications/${this.editingId}`, payload, { headers }).subscribe({
+      this.http.patch(`http://localhost:3000/api/publications/${this.editingId}`, payload).subscribe({
         next: () => {
           this.alertService.success('Actualizado', 'Publicación actualizada con éxito.');
           this.router.navigate(['/dashboard/publications']);
         },
-        error: () => {
-          this.alertService.error('Error', 'No se pudo actualizar el registro.');
+        error: (err) => {
+          this.alertService.error('Error', err.error?.message || 'No se pudo actualizar el registro.');
           this.isSubmitting = false;
         }
       });
     } else {
-      this.http.post('http://localhost:3000/api/publications', payload, { headers }).subscribe({
+      this.http.post('http://localhost:3000/api/publications', payload).subscribe({
         next: () => {
           this.alertService.success('Creado', 'Publicación registrada con éxito.');
           this.router.navigate(['/dashboard/publications']);
         },
-        error: () => {
-          this.alertService.error('Error', 'No se pudo crear el registro.');
+        error: (err) => {
+          this.alertService.error('Error', err.error?.message || 'No se pudo crear el registro.');
           this.isSubmitting = false;
         }
       });
