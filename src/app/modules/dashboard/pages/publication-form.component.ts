@@ -170,7 +170,6 @@ export class PublicationFormComponent implements OnInit {
         startWith(''),
         map(value => this._filter(value || ''))
       );
-      this.cdr.detectChanges();
     });
   }
 

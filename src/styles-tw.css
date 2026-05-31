@@ -1,28 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "@angular/material/prebuilt-themes/indigo-pink.css";
-
-/* Fix for Angular Material Autocomplete Overlay z-index */
-.cdk-overlay-container {
-  z-index: 99999 !important;
-}
-
-/* Override Angular Material focus color to match the project's secondary green */
-.mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__leading,
-.mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__notch,
-.mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__trailing {
-  border-color: var(--secondary) !important;
-  border-width: 2px !important;
-}
-
-.mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label,
-.mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label--float-above {
-  color: var(--secondary) !important;
-}
-
-.mdc-text-field .mdc-text-field__input {
-  caret-color: var(--secondary) !important;
-}
 
 @custom-variant dark (&:is(.dark *));
 
