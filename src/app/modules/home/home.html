@@ -4,7 +4,7 @@
   <div class="absolute inset-0 bg-primary/85 mix-blend-multiply"></div>
   <!-- Decorative Animated Background Elements -->
   <div class="absolute inset-0 bg-pattern-dots opacity-20"></div>
-  
+
   <!-- Animated SVG connecting lines -->
   <svg class="absolute inset-0 w-full h-full opacity-30 pointer-events-none" preserveAspectRatio="none">
     <path class="animate-draw-line" d="M0,100 C150,200 350,0 500,100 C700,200 900,50 1200,150" stroke="var(--secondary)" stroke-width="4" fill="none" stroke-dasharray="1000" stroke-dashoffset="1000"/>
@@ -24,13 +24,17 @@
         </h1>
         <p appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="300ms" class="mx-auto max-w-[800px] text-primary-foreground/90 text-lg md:text-2xl font-light tracking-wide">
           Investigación en ingeniería y operaciones sostenibles avanzadas, naturaleza y sociedad.
+          {{ groupInfo?.acronym || 'REASONS' }}
+        </h1>
+        <p appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="300ms" class="mx-auto max-w-[800px] text-primary-foreground/90 text-lg md:text-2xl font-light tracking-wide">
+          {{ groupInfo?.name || 'Research in Engineering and Advanced Sustainable Operations, Nature, and Society' }}
         </p>
       </div>
       <div class="flex flex-col sm:flex-row gap-4 pt-8 w-full justify-center">
         <a appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="500ms" routerLink="/proyectos" class="inline-flex h-14 items-center justify-center rounded-md bg-secondary px-10 text-lg font-bold text-white shadow-xl transition-all duration-300 hover:bg-secondary/90 hover:scale-105 hover:shadow-secondary/30">
           Proyectos
         </a>
-        <a appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="600ms" routerLink="/investigadores" class="inline-flex h-14 items-center justify-center rounded-md border-2 border-white/20 bg-white/10 backdrop-blur-md px-10 text-lg font-bold text-white shadow-xl transition-all duration-300 hover:bg-white/20 hover:scale-105">
+        <a appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="600ms" href="javascript:void(0)" (click)="scrollTo('quienes-somos')" class="inline-flex h-14 items-center justify-center rounded-md border-2 border-white/20 bg-white/10 backdrop-blur-md px-10 text-lg font-bold text-white shadow-xl transition-all duration-300 hover:bg-white/20 hover:scale-105">
           Quiénes Somos
         </a>
       </div>
@@ -41,48 +45,28 @@
 <!-- Featured Areas Section -->
 <section class="w-full py-16 md:py-24 bg-background border-b border-border relative">
   <div class="container px-4 md:px-6 max-w-7xl mx-auto">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-      
-      <!-- Feature 1 -->
-      <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="100ms" class="flex flex-col items-center md:items-start p-6 bg-card rounded-2xl shadow-lg border border-border/50 hover:-translate-y-2 transition-transform duration-300 group">
-        <div class="text-5xl font-merriweather font-black text-secondary/20 group-hover:text-secondary/40 transition-colors mb-2">01</div>
+    <div class="text-center mb-16" appAnimateOnScroll animationName="animate-fade-in-up">
+      <h2 class="text-3xl md:text-5xl font-merriweather font-bold text-foreground mb-4">Líneas de Investigación</h2>
+      <p class="text-muted-foreground text-lg max-w-2xl mx-auto font-light">
+        Áreas clave donde enfocamos nuestra experiencia y desarrollamos soluciones de impacto.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" *ngIf="groupInfo?.lines_of_research">
+
+      <div *ngFor="let line of groupInfo.lines_of_research; let i = index" appAnimateOnScroll animationName="animate-fade-in-up" [attr.animationDelay]="(i * 200 + 100) + 'ms'" class="flex flex-col items-center md:items-start p-6 bg-card rounded-2xl shadow-lg border border-border/50 hover:-translate-y-2 transition-transform duration-300 group">
+        <div class="text-5xl font-merriweather font-black text-secondary/20 group-hover:text-secondary/40 transition-colors mb-2">0{{i + 1}}</div>
         <div class="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary transition-colors duration-300">
-          <span class="material-icons text-3xl text-primary group-hover:text-white transition-colors duration-300">local_shipping</span>
+          <span class="material-icons text-3xl text-primary group-hover:text-white transition-colors duration-300">{{ getIconForLine(i) }}</span>
         </div>
-        <h4 class="text-xl font-bold font-merriweather text-foreground mb-3 text-center md:text-left">Cadena de Suministro<br>y Logística</h4>
-        <p class="text-muted-foreground text-sm leading-relaxed text-center md:text-left">Análisis y optimización integral de procesos logísticos y flujos de abastecimiento.</p>
+        <h4 class="text-xl font-bold font-merriweather text-foreground mb-3 text-center md:text-left">{{ line.title }}</h4>
+        <p class="text-muted-foreground text-sm leading-relaxed text-center md:text-left">{{ line.description }}</p>
       </div>
 
-      <!-- Feature 2 -->
-      <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="300ms" class="flex flex-col items-center md:items-start p-6 bg-card rounded-2xl shadow-lg border border-border/50 hover:-translate-y-2 transition-transform duration-300 group">
-        <div class="text-5xl font-merriweather font-black text-secondary/20 group-hover:text-secondary/40 transition-colors mb-2">02</div>
-        <div class="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary transition-colors duration-300">
-          <span class="material-icons text-3xl text-primary group-hover:text-white transition-colors duration-300">precision_manufacturing</span>
-        </div>
-        <h4 class="text-xl font-bold font-merriweather text-foreground mb-3 text-center md:text-left">Quinta Revolución<br>Industrial</h4>
-        <p class="text-muted-foreground text-sm leading-relaxed text-center md:text-left">La industria 5.0, integrando el potencial humano con tecnologías avanzadas sostenibles.</p>
-      </div>
-
-      <!-- Feature 3 -->
-      <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="500ms" class="flex flex-col items-center md:items-start p-6 bg-card rounded-2xl shadow-lg border border-border/50 hover:-translate-y-2 transition-transform duration-300 group">
-        <div class="text-5xl font-merriweather font-black text-secondary/20 group-hover:text-secondary/40 transition-colors mb-2">03</div>
-        <div class="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary transition-colors duration-300">
-          <span class="material-icons text-3xl text-primary group-hover:text-white transition-colors duration-300">groups</span>
-        </div>
-        <h4 class="text-xl font-bold font-merriweather text-foreground mb-3 text-center md:text-left">Responsabilidad Social<br>Empresarial</h4>
-        <p class="text-muted-foreground text-sm leading-relaxed text-center md:text-left">Impacto positivo en la sociedad y el entorno a través de políticas corporativas éticas.</p>
-      </div>
-
-      <!-- Feature 4 -->
-      <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="700ms" class="flex flex-col items-center md:items-start p-6 bg-card rounded-2xl shadow-lg border border-border/50 hover:-translate-y-2 transition-transform duration-300 group">
-        <div class="text-5xl font-merriweather font-black text-secondary/20 group-hover:text-secondary/40 transition-colors mb-2">04</div>
-        <div class="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary transition-colors duration-300">
-          <span class="material-icons text-3xl text-primary group-hover:text-white transition-colors duration-300">eco</span>
-        </div>
-        <h4 class="text-xl font-bold font-merriweather text-foreground mb-3 text-center md:text-left">Sostenibilidad<br>Empresarial</h4>
-        <p class="text-muted-foreground text-sm leading-relaxed text-center md:text-left">Prácticas operativas enfocadas en la viabilidad ecológica y la eficiencia de recursos a largo plazo.</p>
-      </div>
-
+    </div>
+    <!-- Loading State for Lines of Research -->
+    <div *ngIf="isLoading" class="flex justify-center py-12">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-secondary"></div>
     </div>
   </div>
 </section>
@@ -92,7 +76,7 @@
   <!-- Minimalist Glow and Dark Overlay -->
   <div class="absolute inset-0 bg-[#0F2027]/90 mix-blend-multiply"></div>
   <div class="absolute inset-0 bg-primary/80"></div>
-  
+
   <div class="container relative z-10 px-4 md:px-6 max-w-7xl mx-auto">
     <div class="text-center mb-16" appAnimateOnScroll animationName="animate-fade-in-up">
       <h2 class="text-3xl md:text-5xl font-merriweather font-bold text-white mb-4">Nuestro Impacto</h2>
@@ -100,26 +84,26 @@
         Avanzando en la frontera del conocimiento con resultados tangibles en la industria y academia.
       </p>
     </div>
-    
+
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 text-center">
       <!-- Stat 1 -->
       <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="100ms" class="flex flex-col items-center justify-center p-10 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
         <span class="material-icons text-4xl text-secondary mb-4">account_tree</span>
-        <h3 class="text-5xl md:text-6xl font-black text-white font-spaceGrotesk tracking-tighter mb-2">15+</h3>
+        <h3 class="text-5xl md:text-6xl font-black text-white font-spaceGrotesk tracking-tighter mb-2">{{ stats.projects }}</h3>
         <p class="text-white/80 font-bold text-xs uppercase tracking-widest mt-2">Proyectos Activos</p>
       </div>
-      
+
       <!-- Stat 2 -->
       <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="300ms" class="flex flex-col items-center justify-center p-10 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
         <span class="material-icons text-4xl text-secondary mb-4">groups</span>
-        <h3 class="text-5xl md:text-6xl font-black text-white font-spaceGrotesk tracking-tighter mb-2">24</h3>
+        <h3 class="text-5xl md:text-6xl font-black text-white font-spaceGrotesk tracking-tighter mb-2">{{ stats.researchers }}</h3>
         <p class="text-white/80 font-bold text-xs uppercase tracking-widest mt-2">Investigadores</p>
       </div>
-      
+
       <!-- Stat 3 -->
       <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="500ms" class="flex flex-col items-center justify-center p-10 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
         <span class="material-icons text-4xl text-secondary mb-4">menu_book</span>
-        <h3 class="text-5xl md:text-6xl font-black text-white font-spaceGrotesk tracking-tighter mb-2">50+</h3>
+        <h3 class="text-5xl md:text-6xl font-black text-white font-spaceGrotesk tracking-tighter mb-2">{{ stats.publications }}</h3>
         <p class="text-white/80 font-bold text-xs uppercase tracking-widest mt-2">Publicaciones</p>
       </div>
     </div>
@@ -127,13 +111,13 @@
 </section>
 
 <!-- Content Section -->
-<section class="w-full py-16 md:py-32 bg-accent/30 overflow-hidden">
+<section id="quienes-somos" class="w-full py-16 md:py-32 bg-accent/30 overflow-hidden">
   <div class="container px-4 md:px-6 max-w-7xl mx-auto">
     <div class="grid max-w-7xl mx-auto items-center gap-12 lg:grid-cols-2">
-      
+
       <!-- Photo Collage Section (Moved to Left) -->
       <div appAnimateOnScroll animationName="animate-zoom-in" animationDelay="100ms" class="relative w-full h-[600px] flex items-center justify-center lg:order-first">
-        
+
         <!-- Decorative Dots Background -->
         <div class="absolute -top-10 -left-10 w-48 h-48 bg-pattern-dots opacity-50 z-0"></div>
         <div class="absolute -bottom-10 -right-10 w-48 h-48 bg-pattern-dots opacity-50 z-0"></div>
@@ -168,33 +152,53 @@
       </div>
 
       <!-- Text Section (Moved to Right) -->
-      <div class="flex flex-col justify-center space-y-6">
+      <div class="flex flex-col justify-center space-y-8" *ngIf="groupInfo">
+
+        <!-- Descripción -->
         <div class="space-y-4" appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="200ms">
-          <div class="flex items-center gap-2 text-primary font-bold tracking-wide uppercase text-sm mb-2">
-            <span class="material-icons text-secondary text-base">check</span> Acerca de Nosotros
-          </div>
+
           <h2 class="text-3xl font-black sm:text-4xl lg:text-5xl font-merriweather text-foreground leading-tight">
-            ¿Qué es <span class="text-primary">REASONS</span> ?
+            ¿Qué es <span class="text-primary">{{ groupInfo?.acronym || 'REASONS' }}</span>?
           </h2>
           <p class="text-muted-foreground text-base leading-relaxed text-justify mt-4">
-            <strong class="text-primary">REASONS</strong> <i>Research in Engineering and Advanced Sustainable Operations, Nature, and Society</i>, es un equipo de investigación multidisciplinario de la Universidad Técnica de Ambato, que acoge a Docentes Investigadores de la Facultad de Ingeniería en Sistemas, Electrónica e Industrial, además de colaboradores internacionales. Adicionalmente cuenta con estudiantes de pre-grado y maestría.
+            {{ groupInfo?.description }}
           </p>
         </div>
-        
+
+        <!-- Objetivo General -->
         <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="300ms" class="flex items-start gap-4 mt-6">
           <div class="bg-primary/5 p-3 rounded-full text-secondary">
-            <span class="material-icons text-3xl">verified</span>
+            <span class="material-icons text-3xl">emoji_objects</span>
           </div>
-          <p class="text-foreground font-bold text-base leading-snug pt-2">
-            Tenemos amplia experiencia desarrollando proyectos de investigación desde la Academia.
-          </p>
+          <div class="flex-1">
+            <h3 class="text-foreground font-bold text-lg mb-2">Objetivo General</h3>
+            <p class="text-muted-foreground text-sm leading-relaxed text-justify">
+              {{ groupInfo.general_objective }}
+            </p>
+          </div>
         </div>
-        
-        <p appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="400ms" class="text-muted-foreground text-sm leading-relaxed text-justify mt-4">
-          Nuestros proyectos han resultado ganadores en convocatorias organizadas por la Dirección de Investigación de la Universidad Técnica de Ambato, no solo por su impacto en el desarrollo investigativo, sino por su aporte al negocio; empresa; desarrollo económico y social; gestión al sector productivo e industrial.
-        </p>
+
+        <!-- Objetivos Específicos -->
+        <div appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="400ms" class="mt-6 space-y-4" *ngIf="groupInfo.specific_objectives?.length > 0">
+          <h3 class="text-foreground font-bold text-lg">Objetivos Específicos</h3>
+          <ul class="space-y-3">
+            <li *ngFor="let obj of groupInfo.specific_objectives" class="flex items-start gap-3">
+              <span class="material-icons text-secondary text-sm mt-0.5">check_circle</span>
+              <p class="text-muted-foreground text-sm leading-relaxed text-justify flex-1">
+                {{ obj.description }}
+              </p>
+            </li>
+          </ul>
+        </div>
+        <div class="flex items-center gap-2 text-primary font-bold tracking-wide uppercase text-sm mb-2">
+            <span class="material-icons text-secondary text-base">domain</span> Dominio: {{ groupInfo.domain || 'Investigación' }}
+          </div>
       </div>
-      
+
+      <div *ngIf="isLoading" class="flex justify-center items-center h-full">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-secondary"></div>
+      </div>
+
     </div>
   </div>
 </section>

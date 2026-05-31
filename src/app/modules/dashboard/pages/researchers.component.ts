@@ -4,13 +4,14 @@ import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { AlertService } from '../../../shared/services/alert.service';
 import { ConfirmDialogService } from '../../../shared/services/confirm-dialog.service';
+import { StatusFormatPipe } from '../../../shared/pipes/status-format.pipe';
 import { finalize, timeout, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard-researchers',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, StatusFormatPipe],
   template: `
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative">
       <div class="flex justify-between items-center mb-6">
@@ -34,22 +35,39 @@ import { of } from 'rxjs';
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-gray-50 text-gray-600 text-sm border-y border-gray-200">
+              <th class="py-3 px-4 font-semibold w-14">Foto</th>
               <th class="py-3 px-4 font-semibold">Nombre Completo</th>
               <th class="py-3 px-4 font-semibold">Email Institucional</th>
               <th class="py-3 px-4 font-semibold">Cargo</th>
+              <th class="py-3 px-4 font-semibold">Estado</th>
               <th class="py-3 px-4 font-semibold text-right">Acciones</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let item of researchers" class="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
               <td class="py-3 px-4">
-                <div class="font-medium text-gray-800">{{item.first_name}} {{item.first_lastname}}</div>
-                <div class="text-xs text-gray-500">{{item.orcid_link}}</div>
+                <div class="h-10 w-10 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center border border-gray-300">
+                  <img *ngIf="item.url_photo" [src]="item.url_photo" class="h-full w-full object-cover">
+                  <span *ngIf="!item.url_photo" class="material-icons text-gray-400">person</span>
+                </div>
+              </td>
+              <td class="py-3 px-4">
+                <div class="font-medium text-gray-800 flex items-center gap-2">
+                  {{item.first_name}} {{item.first_lastname}}
+                  <a *ngIf="item.orcid_link" [href]="item.orcid_link" target="_blank" title="Ver ORCID" class="text-[#A6CE39] hover:opacity-80 transition-opacity">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 0 1-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.025-5.325 5.025h-3.919V7.416zm1.444 1.303v7.44h2.297c3.272 0 4.022-2.484 4.022-3.722 0-2.016-1.284-3.719-4.097-3.719h-2.222z"/>
+                    </svg>
+                  </a>
+                </div>
               </td>
               <td class="py-3 px-4 text-sm text-gray-600">{{item.institutional_email}}</td>
+              <td class="py-3 px-4 text-sm text-gray-600">{{item.position || 'Investigador'}}</td>
               <td class="py-3 px-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  {{item.position || 'Investigador'}}
+                <span *ngIf="item.status | statusFormat as statusInfo" 
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" 
+                      [ngClass]="statusInfo.cssClass">
+                  {{statusInfo.label}}
                 </span>
               </td>
               <td class="py-3 px-4 text-right space-x-2">
@@ -63,7 +81,7 @@ import { of } from 'rxjs';
             </tr>
             
             <tr *ngIf="researchers.length === 0">
-              <td colspan="4" class="py-8 text-center text-gray-500">
+              <td colspan="6" class="py-8 text-center text-gray-500">
                 No hay investigadores registrados.
               </td>
             </tr>
@@ -113,10 +131,7 @@ export class ResearchersDashboardComponent implements OnInit {
     });
     if (!confirmed) return;
 
-    const token = localStorage.getItem('auth_token');
-    this.http.delete(`http://localhost:3000/api/researchers/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    }).subscribe({
+    this.http.delete(`http://localhost:3000/api/researchers/${id}`).subscribe({
       next: () => {
         this.alertService.success('Eliminado', 'Investigador eliminado con éxito');
         this.loadResearchers();

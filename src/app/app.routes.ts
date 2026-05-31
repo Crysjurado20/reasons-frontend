@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+  import { Routes } from '@angular/router';
 
 import { authGuard } from './core/guards/auth.guard';
 
@@ -30,6 +30,12 @@ export const routes: Routes = [
       { path: 'publications/edit/:id', loadComponent: () => import('./modules/dashboard/pages/publication-form.component').then(m => m.PublicationFormComponent) },
       
       { path: 'settings', loadComponent: () => import('./modules/dashboard/pages/settings.component').then(m => m.SettingsComponent) }
+
+      { path: 'social-networks', loadComponent: () => import('./modules/dashboard/pages/social-networks.component').then(m => m.SocialNetworksDashboardComponent) },
+      { path: 'social-networks/new', loadComponent: () => import('./modules/dashboard/pages/social-network-form.component').then(m => m.SocialNetworkFormComponent) },
+      { path: 'social-networks/edit/:id', loadComponent: () => import('./modules/dashboard/pages/social-network-form.component').then(m => m.SocialNetworkFormComponent) },
+      
+      { path: 'settings', loadComponent: () => import('./modules/dashboard/pages/group-settings.component').then(m => m.GroupSettingsComponent) }
     ]
   },
   { path: '**', redirectTo: '' }

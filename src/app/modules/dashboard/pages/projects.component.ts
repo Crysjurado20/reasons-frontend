@@ -4,13 +4,14 @@ import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { AlertService } from '../../../shared/services/alert.service';
 import { ConfirmDialogService } from '../../../shared/services/confirm-dialog.service';
+import { StatusFormatPipe } from '../../../shared/pipes/status-format.pipe';
 import { finalize, timeout, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard-projects',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, StatusFormatPipe],
   template: `
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative">
       <div class="flex justify-between items-center mb-6">
@@ -35,22 +36,26 @@ import { of } from 'rxjs';
           <thead>
             <tr class="bg-gray-50 text-gray-600 text-sm border-y border-gray-200">
               <th class="py-3 px-4 font-semibold">Título</th>
+              <th class="py-3 px-4 font-semibold">Participantes</th>
               <th class="py-3 px-4 font-semibold">Estado</th>
-              <th class="py-3 px-4 font-semibold">Fechas</th>
               <th class="py-3 px-4 font-semibold text-right">Acciones</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let item of projects" class="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
               <td class="py-3 px-4 font-medium text-gray-800 max-w-xs truncate" [title]="item.title">{{item.title}}</td>
-              <td class="py-3 px-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                      [ngClass]="item.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'">
-                  {{item.status === 'ACTIVE' ? 'Activo' : 'Completado'}}
-                </span>
-              </td>
               <td class="py-3 px-4 text-sm text-gray-600">
-                {{item.start_date | date:'shortDate'}} - {{item.end_date ? (item.end_date | date:'shortDate') : 'Actualidad'}}
+                <div class="flex items-center gap-1">
+                  <span class="material-icons text-sm text-gray-400">group</span>
+                  {{ getParticipantCountText(item) }}
+                </div>
+              </td>
+              <td class="py-3 px-4">
+                <span *ngIf="item.status | statusFormat as statusInfo" 
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" 
+                      [ngClass]="statusInfo.cssClass">
+                  {{statusInfo.label}}
+                </span>
               </td>
               <td class="py-3 px-4 text-right space-x-2">
                 <a [routerLink]="['/dashboard/projects/edit', item.id]" class="inline-block text-blue-600 hover:text-blue-800 p-1 bg-blue-50 rounded-md transition-colors cursor-pointer" title="Editar">
@@ -103,6 +108,13 @@ export class ProjectsDashboardComponent implements OnInit {
       .subscribe(data => this.projects = data);
   }
 
+  getParticipantCountText(item: any): string {
+    const count = item.researcher_projects?.length || item.researchers?.length || 0;
+    if (count === 0) return 'Sin investigadores asignados';
+    if (count === 1) return '1 Investigador asignado';
+    return `${count} Investigadores asignados`;
+  }
+
   async deleteProject(id: number) {
     const confirmed = await this.confirmDialog.confirm({
       title: '¿Eliminar Proyecto?',
@@ -113,10 +125,7 @@ export class ProjectsDashboardComponent implements OnInit {
     });
     if (!confirmed) return;
 
-    const token = localStorage.getItem('auth_token');
-    this.http.delete(`http://localhost:3000/api/projects/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    }).subscribe({
+    this.http.delete(`http://localhost:3000/api/projects/${id}`).subscribe({
       next: () => {
         this.alertService.success('Eliminado', 'Proyecto eliminado con éxito');
         this.loadProjects();

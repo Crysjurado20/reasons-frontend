@@ -47,8 +47,9 @@ export class Admin {
         .subscribe({
           next: (response) => {
             this.isSubmitting = false;
-            // Guardar token en localStorage
-            localStorage.setItem('auth_token', response.token);
+            // Guardar tokens utilizando AuthService (instanciado globalmente)
+            localStorage.setItem('access_token', response.accessToken);
+            localStorage.setItem('refresh_token', response.refreshToken);
             localStorage.setItem('user', JSON.stringify(response.user));
             
             // Mostrar alerta elegante
