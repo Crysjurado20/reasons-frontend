@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -6,25 +6,18 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AlertService } from '../../../shared/services/alert.service';
 
 import { MatChipsModule } from '@angular/material/chips';
-import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-project-form',
   standalone: true,
+  providers: [],
   imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
+    CommonModule,
+    ReactiveFormsModule,
     RouterLink,
     MatChipsModule,
-    MatAutocompleteModule,
-    MatIconModule,
-    MatInputModule,
-    MatFormFieldModule
+    MatIconModule
   ],
   template: `
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 max-w-3xl mx-auto">
@@ -104,36 +97,48 @@ import { map, startWith } from 'rxjs/operators';
           </div>
         </div>
 
-        <!-- Researchers Autocomplete Chips -->
+        <!-- Researchers Custom Dropdown -->
         <div class="space-y-4 pt-4 border-t border-gray-100">
           <label class="text-sm font-semibold text-gray-700">Investigadores Asignados</label>
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-chip-grid #chipGrid aria-label="Selección de investigadores">
-              <mat-chip-row *ngFor="let res of researchers.value; let i = index"
-                            (removed)="removeResearcher(i)">
+          
+          <!-- Chips container + Input -->
+          <div class="relative" #dropdownContainer>
+            <div class="flex flex-wrap gap-2 p-2.5 border border-gray-300 rounded-lg min-h-[44px] focus-within:ring-2 focus-within:ring-secondary focus-within:border-secondary transition-all cursor-text"
+                 (click)="researcherInput.focus()">
+              <span *ngFor="let res of researchers.value; let i = index"
+                    class="inline-flex items-center gap-1 bg-secondary/10 text-secondary text-sm font-medium px-2.5 py-1 rounded-full">
                 {{ getResearcherName(res.researcher_id) }}
-                <button matChipRemove [attr.aria-label]="'Eliminar'">
-                  <mat-icon>cancel</mat-icon>
+                <button type="button" (click)="$event.stopPropagation(); removeResearcher(i)"
+                        class="text-secondary hover:text-red-500 transition-colors leading-none">
+                  <span class="material-icons text-base leading-none">close</span>
                 </button>
-              </mat-chip-row>
-              <input placeholder="Buscar investigador..."
-                     #researcherInput
+              </span>
+              <input #researcherInput
+                     type="text"
                      [formControl]="researcherCtrl"
-                     [matChipInputFor]="chipGrid"
-                     [matAutocomplete]="auto">
-            </mat-chip-grid>
-            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-              <mat-option *ngFor="let res of filteredResearchers | async" [value]="res">
-                <div class="flex items-center gap-2">
-                  <div class="h-6 w-6 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center border border-gray-300">
-                    <img *ngIf="res.url_photo" [src]="res.url_photo" class="h-full w-full object-cover">
-                    <span *ngIf="!res.url_photo" class="material-icons text-[12px] text-gray-400">person</span>
-                  </div>
-                  <span class="text-sm">{{ res.first_name }} {{ res.first_lastname }}</span>
+                     (focus)="showDropdown = true"
+                     placeholder="Buscar investigador..."
+                     class="flex-1 min-w-[160px] outline-none bg-transparent text-sm py-0.5 placeholder-gray-400">
+            </div>
+
+            <!-- Dropdown list -->
+            <div *ngIf="showDropdown"
+                 class="absolute top-full left-0 right-0 z-50 bg-white border border-gray-200 rounded-lg shadow-xl mt-1 max-h-52 overflow-y-auto">
+              <div *ngFor="let res of availableResearchers"
+                   (click)="selectResearcher(res)"
+                   class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors">
+                <div class="h-8 w-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 flex items-center justify-center border border-gray-300">
+                  <img *ngIf="res.url_photo" [src]="res.url_photo" class="h-full w-full object-cover">
+                  <span *ngIf="!res.url_photo" class="material-icons text-sm text-gray-400">person</span>
                 </div>
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
+                <span class="text-sm text-gray-800">{{ res.first_name }} {{ res.first_lastname }}</span>
+              </div>
+              <div *ngIf="availableResearchers.length === 0"
+                   class="px-4 py-3 text-sm text-gray-500 italic text-center">
+                No hay más investigadores disponibles.
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="pt-6 flex justify-end gap-4 border-t border-gray-100">
@@ -172,9 +177,10 @@ export class ProjectFormComponent implements OnInit {
 
   researcherCtrl = new FormControl('');
   allResearchers: any[] = [];
-  filteredResearchers!: Observable<any[]>;
+  showDropdown = false;
 
   @ViewChild('researcherInput') researcherInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('dropdownContainer') dropdownContainer!: ElementRef;
 
   get objectives() { return this.form.get('objectives') as FormArray; }
   get results() { return this.form.get('results') as FormArray; }
@@ -194,41 +200,36 @@ export class ProjectFormComponent implements OnInit {
   loadAllResearchers() {
     this.http.get<any[]>('http://localhost:3000/api/researchers').subscribe(data => {
       this.allResearchers = data;
-      this.filteredResearchers = this.researcherCtrl.valueChanges.pipe(
-        startWith(''),
-        map(value => this._filter(value || ''))
-      );
     });
   }
 
-  private _filter(value: string | any): any[] {
-    const filterValue = typeof value === 'string' ? value.toLowerCase() : '';
+  get availableResearchers(): any[] {
     const selectedIds = this.researchers.value.map((r: any) => r.researcher_id);
-    return this.allResearchers.filter(res => 
+    const filterValue = (this.researcherCtrl.value || '').toLowerCase();
+    return this.allResearchers.filter(res =>
       !selectedIds.includes(res.id) &&
       `${res.first_name} ${res.first_lastname}`.toLowerCase().includes(filterValue)
     );
   }
 
-  selected(event: MatAutocompleteSelectedEvent): void {
-    const selectedResearcher = event.option.value;
-    const currentIds = this.researchers.value.map((r: any) => r.researcher_id);
-    
-    if (!currentIds.includes(selectedResearcher.id)) {
-      this.researchers.push(this.fb.group({
-        researcher_id: [selectedResearcher.id, Validators.required]
-      }));
+  selectResearcher(res: any): void {
+    this.researchers.push(this.fb.group({
+      researcher_id: [res.id, Validators.required]
+    }));
+    this.researcherCtrl.setValue('');
+    // Al seleccionar, mantenemos el foco en el input para poder seguir añadiendo
+    this.researcherInput.nativeElement.focus();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    if (this.showDropdown && this.dropdownContainer && !this.dropdownContainer.nativeElement.contains(event.target)) {
+      this.showDropdown = false;
     }
-    
-    if (this.researcherInput) {
-      this.researcherInput.nativeElement.value = '';
-    }
-    this.researcherCtrl.setValue(null);
   }
 
   removeResearcher(index: number): void {
     this.researchers.removeAt(index);
-    this.researcherCtrl.setValue(this.researcherCtrl.value);
   }
 
   getResearcherName(id: number): string {
@@ -258,14 +259,14 @@ export class ProjectFormComponent implements OnInit {
             this.objectives.push(this.fb.group({ description: [obj.description, Validators.required] }));
           });
         }
-        
+
         // Load results
         if (data.results && Array.isArray(data.results)) {
           data.results.forEach((res: any) => {
             this.results.push(this.fb.group({ description: [res.description, Validators.required] }));
           });
         }
-        
+
         // Load researchers
         const researchersData = data.researcher_projects || data.researchers;
         if (researchersData && Array.isArray(researchersData)) {

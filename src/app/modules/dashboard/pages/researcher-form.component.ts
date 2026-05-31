@@ -92,7 +92,12 @@ import { AlertService } from '../../../shared/services/alert.service';
           </div>
           <div formArrayName="researcher_socials" class="space-y-3">
             <div *ngFor="let soc of researcher_socials.controls; let i=index" [formGroupName]="i" class="flex items-center gap-3">
-              <input type="number" formControlName="social_network_id" class="w-24 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-secondary outline-none text-sm" placeholder="ID Red">
+              <select formControlName="social_network_id" class="w-40 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-secondary outline-none text-sm bg-white">
+                <option [ngValue]="null" disabled>Selecciona red...</option>
+                <option *ngFor="let net of allSocialNetworks" [value]="net.id" [disabled]="isSocialNetworkSelected(net.id, i)" [hidden]="isSocialNetworkSelected(net.id, i)">
+                  {{ net.name }}
+                </option>
+              </select>
               <input type="url" formControlName="url_profile" class="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-secondary outline-none text-sm" placeholder="https://linkedin.com/in/... (URL Perfil)">
               <button type="button" (click)="removeSocial(i)" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors">
                 <span class="material-icons text-sm">delete</span>
@@ -140,9 +145,12 @@ export class ResearcherFormComponent implements OnInit {
     researcher_socials: this.fb.array([])
   });
 
+  allSocialNetworks: any[] = [];
+
   get researcher_socials() { return this.form.get('researcher_socials') as FormArray; }
 
   ngOnInit() {
+    this.loadSocialNetworks();
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.isEditing = true;
@@ -151,12 +159,25 @@ export class ResearcherFormComponent implements OnInit {
       }
     });
   }
-  
-  addSocial() { 
-    this.researcher_socials.push(this.fb.group({ 
-      social_network_id: [null, [Validators.required, Validators.min(1)]],
+  loadSocialNetworks() {
+    this.http.get<any[]>('http://localhost:3000/api/social-networks').subscribe({
+      next: (data) => this.allSocialNetworks = data,
+      error: () => console.error('Error al cargar redes sociales')
+    });
+  }
+
+  isSocialNetworkSelected(networkId: number, currentIndex: number): boolean {
+    const selectedIds = this.researcher_socials.value.map((s: any, index: number) =>
+      index !== currentIndex ? Number(s.social_network_id) : null
+    );
+    return selectedIds.includes(Number(networkId));
+  }
+
+  addSocial() {
+    this.researcher_socials.push(this.fb.group({
+      social_network_id: [null, Validators.required],
       url_profile: ['', Validators.required]
-    })); 
+    }));
   }
   removeSocial(index: number) { this.researcher_socials.removeAt(index); }
 
@@ -175,11 +196,11 @@ export class ResearcherFormComponent implements OnInit {
           orcid_link: data.orcid_link,
           biography: data.biography
         });
-        
+
         const socialsData = data.researcher_socials;
         if (socialsData && Array.isArray(socialsData)) {
           socialsData.forEach((soc: any) => {
-            this.researcher_socials.push(this.fb.group({ 
+            this.researcher_socials.push(this.fb.group({
               social_network_id: [soc.social_network_id, Validators.required],
               url_profile: [soc.url_profile, Validators.required]
             }));
@@ -204,7 +225,11 @@ export class ResearcherFormComponent implements OnInit {
     }
 
     this.isSubmitting = true;
-    const payload = this.form.value;
+    const payload = { ...this.form.value };
+    payload.researcher_socials = payload.researcher_socials.map((s: any) => ({
+      ...s,
+      social_network_id: Number(s.social_network_id)
+    }));
 
     if (this.isEditing) {
       this.http.patch(`http://localhost:3000/api/researchers/${this.editingId}`, payload).subscribe({

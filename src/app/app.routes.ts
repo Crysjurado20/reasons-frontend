@@ -25,7 +25,13 @@ export const routes: Routes = [
       
       { path: 'publications', loadComponent: () => import('./modules/dashboard/pages/publications.component').then(m => m.PublicationsDashboardComponent) },
       { path: 'publications/new', loadComponent: () => import('./modules/dashboard/pages/publication-form.component').then(m => m.PublicationFormComponent) },
-      { path: 'publications/edit/:id', loadComponent: () => import('./modules/dashboard/pages/publication-form.component').then(m => m.PublicationFormComponent) }
+      { path: 'publications/edit/:id', loadComponent: () => import('./modules/dashboard/pages/publication-form.component').then(m => m.PublicationFormComponent) },
+
+      { path: 'social-networks', loadComponent: () => import('./modules/dashboard/pages/social-networks.component').then(m => m.SocialNetworksDashboardComponent) },
+      { path: 'social-networks/new', loadComponent: () => import('./modules/dashboard/pages/social-network-form.component').then(m => m.SocialNetworkFormComponent) },
+      { path: 'social-networks/edit/:id', loadComponent: () => import('./modules/dashboard/pages/social-network-form.component').then(m => m.SocialNetworkFormComponent) },
+      
+      { path: 'settings', loadComponent: () => import('./modules/dashboard/pages/group-settings.component').then(m => m.GroupSettingsComponent) }
     ]
   },
   { path: '**', redirectTo: '' }
