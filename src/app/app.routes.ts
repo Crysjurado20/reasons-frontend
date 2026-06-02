@@ -29,7 +29,7 @@ export const routes: Routes = [
       { path: 'publications/new', loadComponent: () => import('./modules/dashboard/pages/publication-form.component').then(m => m.PublicationFormComponent) },
       { path: 'publications/edit/:id', loadComponent: () => import('./modules/dashboard/pages/publication-form.component').then(m => m.PublicationFormComponent) },
       
-      { path: 'settings', loadComponent: () => import('./modules/dashboard/pages/settings.component').then(m => m.SettingsComponent) }
+      { path: 'settings', loadComponent: () => import('./modules/dashboard/pages/settings.component').then(m => m.SettingsComponent) },
 
       { path: 'social-networks', loadComponent: () => import('./modules/dashboard/pages/social-networks.component').then(m => m.SocialNetworksDashboardComponent) },
       { path: 'social-networks/new', loadComponent: () => import('./modules/dashboard/pages/social-network-form.component').then(m => m.SocialNetworkFormComponent) },
