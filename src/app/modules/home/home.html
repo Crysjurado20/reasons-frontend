@@ -19,8 +19,13 @@
     <div class="flex flex-col items-center space-y-6 text-center">
       <div class="space-y-4">
         <h1 appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="100ms" class="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl font-merriweather text-white drop-shadow-lg">
-          {{ groupInfo?.acronym || 'REASONS' }}
+          Gestión industrial e <br class="hidden md:block"/>
+          <span class="text-secondary">investigación en innovación.</span>
         </h1>
+        <p appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="300ms" class="mx-auto max-w-[800px] text-primary-foreground/90 text-lg md:text-2xl font-light tracking-wide">
+          Investigación en ingeniería y operaciones sostenibles avanzadas, naturaleza y sociedad.
+          {{ groupInfo?.acronym || 'REASONS' }}
+        </p>
         <p appAnimateOnScroll animationName="animate-fade-in-up" animationDelay="300ms" class="mx-auto max-w-[800px] text-primary-foreground/90 text-lg md:text-2xl font-light tracking-wide">
           {{ groupInfo?.name || 'Research in Engineering and Advanced Sustainable Operations, Nature, and Society' }}
         </p>
