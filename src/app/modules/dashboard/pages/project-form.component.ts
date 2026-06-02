@@ -32,7 +32,6 @@ import { MatIconModule } from '@angular/material/icon';
         </div>
       </div>
 
-      <!-- Loader Interno -->
       <div *ngIf="isLoading" class="py-12 flex justify-center">
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-secondary"></div>
       </div>
@@ -41,12 +40,16 @@ import { MatIconModule } from '@angular/material/icon';
         
         <div class="space-y-2">
           <label class="text-sm font-semibold text-gray-700">Título del Proyecto <span class="text-red-500">*</span></label>
-          <input type="text" formControlName="title" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all" placeholder="Ej. Implementación de Algoritmos Genéticos...">
+          <input type="text" formControlName="title" 
+                 [ngClass]="{'border-red-500 focus:ring-red-200 focus:border-red-500': isFieldInvalid('title')}"
+                 class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all" placeholder="Ej. Implementación de Algoritmos Genéticos...">
         </div>
 
         <div class="space-y-2">
           <label class="text-sm font-semibold text-gray-700">Descripción <span class="text-red-500">*</span></label>
-          <textarea formControlName="description" rows="5" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all resize-none" placeholder="Descripción detallada de los objetivos del proyecto..."></textarea>
+          <textarea formControlName="description" rows="5" 
+                    [ngClass]="{'border-red-500 focus:ring-red-200 focus:border-red-500': isFieldInvalid('description')}"
+                    class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all resize-none" placeholder="Descripción detallada de los objetivos del proyecto..."></textarea>
         </div>
 
         <div class="space-y-2">
@@ -59,7 +62,6 @@ import { MatIconModule } from '@angular/material/icon';
 
         <hr class="border-gray-100">
 
-        <!-- Objectives Array -->
         <div class="space-y-4">
           <div class="flex justify-between items-center">
             <label class="text-sm font-semibold text-gray-700">Objetivos del Proyecto</label>
@@ -69,7 +71,9 @@ import { MatIconModule } from '@angular/material/icon';
           </div>
           <div formArrayName="objectives" class="space-y-3">
             <div *ngFor="let obj of objectives.controls; let i=index" [formGroupName]="i" class="flex items-center gap-3">
-              <input type="text" formControlName="description" class="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-secondary outline-none text-sm" placeholder="Descripción del objetivo...">
+              <input type="text" formControlName="description" 
+                     [ngClass]="{'border-red-500 focus:ring-red-200': obj.get('description')?.invalid && obj.get('description')?.touched}"
+                     class="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-secondary outline-none text-sm" placeholder="Descripción del objetivo...">
               <button type="button" (click)="removeObjective(i)" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors">
                 <span class="material-icons text-sm">delete</span>
               </button>
@@ -78,7 +82,6 @@ import { MatIconModule } from '@angular/material/icon';
           </div>
         </div>
 
-        <!-- Results Array -->
         <div class="space-y-4 pt-4">
           <div class="flex justify-between items-center">
             <label class="text-sm font-semibold text-gray-700">Resultados del Proyecto</label>
@@ -88,7 +91,9 @@ import { MatIconModule } from '@angular/material/icon';
           </div>
           <div formArrayName="results" class="space-y-3">
             <div *ngFor="let res of results.controls; let i=index" [formGroupName]="i" class="flex items-center gap-3">
-              <input type="text" formControlName="description" class="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-secondary outline-none text-sm" placeholder="Descripción del resultado...">
+              <input type="text" formControlName="description" 
+                     [ngClass]="{'border-red-500 focus:ring-red-200': res.get('description')?.invalid && res.get('description')?.touched}"
+                     class="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-secondary outline-none text-sm" placeholder="Descripción del resultado...">
               <button type="button" (click)="removeResult(i)" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors">
                 <span class="material-icons text-sm">delete</span>
               </button>
@@ -97,11 +102,9 @@ import { MatIconModule } from '@angular/material/icon';
           </div>
         </div>
 
-        <!-- Researchers Custom Dropdown -->
         <div class="space-y-4 pt-4 border-t border-gray-100">
           <label class="text-sm font-semibold text-gray-700">Investigadores Asignados</label>
           
-          <!-- Chips container + Input -->
           <div class="relative" #dropdownContainer>
             <div class="flex flex-wrap gap-2 p-2.5 border border-gray-300 rounded-lg min-h-[44px] focus-within:ring-2 focus-within:ring-secondary focus-within:border-secondary transition-all cursor-text"
                  (click)="researcherInput.focus()">
@@ -121,7 +124,6 @@ import { MatIconModule } from '@angular/material/icon';
                      class="flex-1 min-w-[160px] outline-none bg-transparent text-sm py-0.5 placeholder-gray-400">
             </div>
 
-            <!-- Dropdown list -->
             <div *ngIf="showDropdown"
                  class="absolute top-full left-0 right-0 z-50 bg-white border border-gray-200 rounded-lg shadow-xl mt-1 max-h-52 overflow-y-auto">
               <div *ngFor="let res of availableResearchers"
@@ -143,7 +145,8 @@ import { MatIconModule } from '@angular/material/icon';
 
         <div class="pt-6 flex justify-end gap-4 border-t border-gray-100">
           <a routerLink="/dashboard/projects" class="px-6 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 font-medium transition-colors">Cancelar</a>
-          <button type="submit" [disabled]="isSubmitting" class="px-8 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 shadow-md transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
+          <button type="submit" [disabled]="form.invalid || isSubmitting" 
+                  class="px-8 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 shadow-md transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
             <span *ngIf="isSubmitting" class="material-icons animate-spin text-sm">refresh</span>
             <span>{{ isEditing ? 'Actualizar Cambios' : 'Guardar Proyecto' }}</span>
           </button>
@@ -198,8 +201,9 @@ export class ProjectFormComponent implements OnInit {
   }
 
   loadAllResearchers() {
-    this.http.get<any[]>('http://localhost:3000/api/researchers').subscribe(data => {
-      this.allResearchers = data;
+    this.http.get<any[]>('http://localhost:3000/api/researchers').subscribe({
+      next: (data) => this.allResearchers = data,
+      error: () => console.error('Error al obtener investigadores')
     });
   }
 
@@ -212,14 +216,13 @@ export class ProjectFormComponent implements OnInit {
     );
   }
 
-  selectResearcher(res: any): void {
-    this.researchers.push(this.fb.group({
-      researcher_id: [res.id, Validators.required]
-    }));
-    this.researcherCtrl.setValue('');
-    // Al seleccionar, mantenemos el foco en el input para poder seguir añadiendo
-    this.researcherInput.nativeElement.focus();
-  }
+selectResearcher(res: any): void {
+  this.researchers.push(this.fb.group({
+    researcher_id: [Number(res.id), Validators.required] // Asegura que se guarde como número
+  }));
+  this.researcherCtrl.setValue('');
+  this.researcherInput.nativeElement.focus();
+}
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
@@ -237,11 +240,20 @@ export class ProjectFormComponent implements OnInit {
     return res ? `${res.first_name} ${res.first_lastname}` : 'Cargando...';
   }
 
-  addObjective() { this.objectives.push(this.fb.group({ description: ['', Validators.required] })); }
+  addObjective() { 
+    this.objectives.push(this.fb.group({ description: ['', Validators.required] })); 
+  }
   removeObjective(index: number) { this.objectives.removeAt(index); }
 
-  addResult() { this.results.push(this.fb.group({ description: ['', Validators.required] })); }
+  addResult() { 
+    this.results.push(this.fb.group({ description: ['', Validators.required] })); 
+  }
   removeResult(index: number) { this.results.removeAt(index); }
+
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.form.get(fieldName);
+    return !!(field && field.invalid && field.touched);
+  }
 
   loadProject(id: number) {
     this.isLoading = true;
@@ -253,21 +265,22 @@ export class ProjectFormComponent implements OnInit {
           status: data.status
         });
 
-        // Load objectives
+        // Limpieza explícita para evitar registros duplicados visualmente
+        this.objectives.clear();
         if (data.objectives && Array.isArray(data.objectives)) {
           data.objectives.forEach((obj: any) => {
             this.objectives.push(this.fb.group({ description: [obj.description, Validators.required] }));
           });
         }
 
-        // Load results
+        this.results.clear();
         if (data.results && Array.isArray(data.results)) {
           data.results.forEach((res: any) => {
             this.results.push(this.fb.group({ description: [res.description, Validators.required] }));
           });
         }
 
-        // Load researchers
+        this.researchers.clear();
         const researchersData = data.researcher_projects || data.researchers;
         if (researchersData && Array.isArray(researchersData)) {
           researchersData.forEach((rel: any) => {
@@ -275,7 +288,6 @@ export class ProjectFormComponent implements OnInit {
           });
         }
 
-        this.researcherCtrl.setValue(this.researcherCtrl.value);
         this.isLoading = false;
         this.cdr.detectChanges();
       },

@@ -28,11 +28,10 @@ import { MatIconModule } from '@angular/material/icon';
         </a>
         <div>
           <h2 class="text-2xl font-bold text-gray-800 font-merriweather">{{ isEditing ? 'Editar Publicación' : 'Nueva Publicación' }}</h2>
-          <p class="text-gray-500 text-sm mt-1">Completa la información del artículo científico.</p>
+          <p class="text-gray-500 text-sm mt-1">Completa la información del artículo científico institucional.</p>
         </div>
       </div>
 
-      <!-- Loader Interno -->
       <div *ngIf="isLoading" class="py-12 flex justify-center">
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-secondary"></div>
       </div>
@@ -41,12 +40,16 @@ import { MatIconModule } from '@angular/material/icon';
         
         <div class="space-y-2">
           <label class="text-sm font-semibold text-gray-700">Título de la Publicación <span class="text-red-500">*</span></label>
-          <input type="text" formControlName="title" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all" placeholder="Ej. Avances en Inteligencia Artificial...">
+          <input type="text" formControlName="title" 
+                 [ngClass]="{'border-red-500 focus:ring-red-200 focus:border-red-500': isFieldInvalid('title')}"
+                 class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all" placeholder="Ej. Avances en Inteligencia Artificial...">
         </div>
 
         <div class="space-y-2">
           <label class="text-sm font-semibold text-gray-700">Resumen (Abstract) <span class="text-red-500">*</span></label>
-          <textarea formControlName="abstract" rows="6" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all resize-none" placeholder="Escribe o pega el abstract aquí..."></textarea>
+          <textarea formControlName="abstract" rows="6" 
+                    [ngClass]="{'border-red-500 focus:ring-red-200 focus:border-red-500': isFieldInvalid('abstract')}"
+                    class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all resize-none" placeholder="Escribe o pega el abstract aquí..."></textarea>
         </div>
 
         <hr class="border-gray-100">
@@ -54,10 +57,11 @@ import { MatIconModule } from '@angular/material/icon';
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-2">
             <label class="text-sm font-semibold text-gray-700">Cita Formateada</label>
-            <input type="text" formControlName="cite" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all text-gray-700" placeholder="Ej. APA Citation">
+            <input type="text" formControlName="cite" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all text-gray-700" placeholder="Ej. Tigre, F., et al. (2025)...">
           </div>
+          
           <div class="space-y-2">
-            <label class="text-sm font-semibold text-gray-700">Estado de Publicación</label>
+            <label class="text-sm font-semibold text-gray-700">Estado de Publicación <span class="text-red-500">*</span></label>
             <select formControlName="status" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all bg-white">
               <option value="PUBLISHED">Publicado</option>
               <option value="IN_REVIEW">En Revisión</option>
@@ -67,16 +71,19 @@ import { MatIconModule } from '@angular/material/icon';
         </div>
         
         <div class="space-y-2">
-            <label class="text-sm font-semibold text-gray-700">URL Portada de Revista (Opcional)</label>
-            <input type="url" formControlName="url_journal_cover" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all" placeholder="https://...">
+          <label class="text-sm font-semibold text-gray-700">URL Portada de Revista (Opcional)</label>
+          <input type="url" formControlName="url_journal_cover" 
+                 [ngClass]="{'border-red-500 focus:ring-red-200 focus:border-red-500': isFieldInvalid('url_journal_cover')}"
+                 class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all" placeholder="https://...">
+          <p *ngIf="form.get('url_journal_cover')?.hasError('pattern') && form.get('url_journal_cover')?.touched" class="text-xs text-red-500 font-medium">Debe ingresar una URL de enlace válida (http:// o https://).</p>
         </div>
 
-        <!-- Researchers Custom Dropdown -->
         <div class="space-y-4 pt-4 border-t border-gray-100">
-          <label class="text-sm font-semibold text-gray-700">Autores/Investigadores</label>
+          <label class="text-sm font-semibold text-gray-700">Autores/Investigadores <span class="text-red-500">*</span></label>
 
           <div class="relative" #dropdownContainer>
             <div class="flex flex-wrap gap-2 p-2.5 border border-gray-300 rounded-lg min-h-[44px] focus-within:ring-2 focus-within:ring-secondary focus-within:border-secondary transition-all cursor-text"
+                 [ngClass]="{'border-red-500': researchers.invalid && researchers.touched}"
                  (click)="researcherInput.focus()">
               <span *ngFor="let res of researchers.value; let i = index"
                     class="inline-flex items-center gap-1 bg-secondary/10 text-secondary text-sm font-medium px-2.5 py-1 rounded-full">
@@ -94,7 +101,6 @@ import { MatIconModule } from '@angular/material/icon';
                      class="flex-1 min-w-[160px] outline-none bg-transparent text-sm py-0.5 placeholder-gray-400">
             </div>
 
-            <!-- Dropdown list -->
             <div *ngIf="showDropdown"
                  class="absolute top-full left-0 right-0 z-50 bg-white border border-gray-200 rounded-lg shadow-xl mt-1 max-h-52 overflow-y-auto">
               <div *ngFor="let res of availableResearchers"
@@ -112,11 +118,13 @@ import { MatIconModule } from '@angular/material/icon';
               </div>
             </div>
           </div>
+          <p *ngIf="researchers.invalid && researchers.touched" class="text-xs text-red-500 font-medium">Debe asignar al menos un autor a la publicación.</p>
         </div>
 
         <div class="pt-6 flex justify-end gap-4 border-t border-gray-100">
           <a routerLink="/dashboard/publications" class="px-6 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 font-medium transition-colors">Cancelar</a>
-          <button type="submit" [disabled]="isSubmitting" class="px-8 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 shadow-md transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
+          <button type="submit" [disabled]="form.invalid || isSubmitting" 
+                  class="px-8 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 shadow-md transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
             <span *ngIf="isSubmitting" class="material-icons animate-spin text-sm">refresh</span>
             <span>{{ isEditing ? 'Actualizar Cambios' : 'Guardar Publicación' }}</span>
           </button>
@@ -139,13 +147,16 @@ export class PublicationFormComponent implements OnInit {
   isLoading = false;
   isSubmitting = false;
 
+// Esta regex valida cualquier URL estructurada, con puertos, rutas complejas y parámetros de consulta
+private readonly urlPattern = /^(https?:\/\/)?(localhost|[\da-z.-]+\.[a-z.]{2,6})(:[0-9]{1,5})?(\/[\/\w\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e.-]*)*\/?$/i;
+
   form: FormGroup = this.fb.group({
     title: ['', Validators.required],
-    abstract: [''],
-    cite: [''],
-    status: ['PUBLISHED'],
-    url_journal_cover: [''],
-    researchers: this.fb.array([])
+    abstract: ['', Validators.required], // Obligatorio
+    cite: [''], // Opcional
+    status: ['PUBLISHED', Validators.required],
+    url_journal_cover: ['', [Validators.pattern(this.urlPattern)]], // Validado solo si se escribe
+    researchers: this.fb.array([], Validators.required) // Requiere al menos un autor
   });
 
   researcherCtrl = new FormControl('');
@@ -169,8 +180,9 @@ export class PublicationFormComponent implements OnInit {
   }
 
   loadAllResearchers() {
-    this.http.get<any[]>('http://localhost:3000/api/researchers').subscribe(data => {
-      this.allResearchers = data;
+    this.http.get<any[]>('http://localhost:3000/api/researchers').subscribe({
+      next: (data) => this.allResearchers = data,
+      error: () => console.error('Error al obtener investigadores')
     });
   }
 
@@ -185,11 +197,11 @@ export class PublicationFormComponent implements OnInit {
 
   selectResearcher(res: any): void {
     this.researchers.push(this.fb.group({
-      researcher_id: [res.id, Validators.required]
+      researcher_id: [Number(res.id), Validators.required] // Cast estricto a Number
     }));
     this.researcherCtrl.setValue('');
-    // Al seleccionar, mantenemos el foco en el input para poder seguir añadiendo
     this.researcherInput.nativeElement.focus();
+    this.form.get('researchers')?.markAsTouched();
   }
 
   @HostListener('document:click', ['$event'])
@@ -201,11 +213,17 @@ export class PublicationFormComponent implements OnInit {
 
   removeResearcher(index: number): void {
     this.researchers.removeAt(index);
+    this.form.get('researchers')?.markAsTouched();
   }
 
   getResearcherName(id: number): string {
     const res = this.allResearchers.find(r => r.id === id);
     return res ? `${res.first_name} ${res.first_lastname}` : 'Cargando...';
+  }
+
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.form.get(fieldName);
+    return !!(field && field.invalid && field.touched);
   }
 
   loadPublication(id: number) {
@@ -214,20 +232,21 @@ export class PublicationFormComponent implements OnInit {
       next: (data) => {
         this.form.patchValue({
           title: data.title,
-          abstract: data.abstract,
-          cite: data.cite,
-          status: data.status,
-          url_journal_cover: data.url_journal_cover
+          abstract: data.abstract || '',
+          cite: data.cite || '',
+          status: data.status || 'PUBLISHED',
+          url_journal_cover: data.url_journal_cover || ''
         });
 
+        // Limpieza de control previa antes de poblar la data
+        this.researchers.clear();
         const researchersData = data.researcher_articles || data.researchers;
         if (researchersData && Array.isArray(researchersData)) {
           researchersData.forEach((rel: any) => {
-            this.researchers.push(this.fb.group({ researcher_id: [rel.researcher_id, Validators.required] }));
+            this.researchers.push(this.fb.group({ researcher_id: [Number(rel.researcher_id), Validators.required] }));
           });
         }
 
-        this.researcherCtrl.setValue(this.researcherCtrl.value);
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -241,12 +260,23 @@ export class PublicationFormComponent implements OnInit {
   onSubmit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      this.alertService.warning('Formulario incompleto', 'Revisa los campos obligatorios (*).');
+      this.alertService.warning('Formulario inválido', 'Revisa los campos obligatorios o formatos de URL.');
       return;
     }
 
     this.isSubmitting = true;
-    const payload = this.form.value;
+    const rawValues = this.form.value;
+
+    // Saneamiento robusto: Cadenas vacías pasadas explícitamente como NULL
+    const payload = {
+      ...rawValues,
+      abstract: rawValues.abstract?.trim() === "" ? null : rawValues.abstract,
+      cite: rawValues.cite?.trim() === "" ? null : rawValues.cite,
+      url_journal_cover: rawValues.url_journal_cover?.trim() === "" ? null : rawValues.url_journal_cover,
+      researchers: rawValues.researchers.map((r: any) => ({
+        researcher_id: Number(r.researcher_id)
+      }))
+    };
 
     if (this.isEditing) {
       this.http.patch(`http://localhost:3000/api/publications/${this.editingId}`, payload).subscribe({
