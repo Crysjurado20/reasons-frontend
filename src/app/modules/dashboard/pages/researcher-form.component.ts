@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AlertService } from '../../../shared/services/alert.service';
 
@@ -60,6 +60,17 @@ import { AlertService } from '../../../shared/services/alert.service';
             <input type="text" formControlName="position" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all" placeholder="Ej. Investigador Principal">
           </div>
         </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-gray-700">Estado <span class="text-red-500">*</span></label>
+            <select formControlName="status" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all bg-white">
+              <option value="ACTIVE">Activo</option>
+              <option value="INACTIVE">Inactivo</option>
+              <option value="ALUMNI">Ex-miembro</option>
+            </select>
+          </div>
+        </div>
 
         <div class="space-y-2">
           <label class="text-sm font-semibold text-gray-700">Enlace ORCID</label>
@@ -69,6 +80,31 @@ import { AlertService } from '../../../shared/services/alert.service';
         <div class="space-y-2">
           <label class="text-sm font-semibold text-gray-700">Biografía</label>
           <textarea formControlName="biography" rows="4" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all resize-none" placeholder="Breve descripción del perfil profesional..."></textarea>
+        </div>
+
+        <!-- Social Networks Array -->
+        <div class="space-y-4 pt-4">
+          <div class="flex justify-between items-center">
+            <label class="text-sm font-semibold text-gray-700">Redes Sociales / Perfiles Externos</label>
+            <button type="button" (click)="addSocial()" class="text-xs bg-secondary/10 text-secondary hover:bg-secondary hover:text-white px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 font-medium">
+              <span class="material-icons text-sm">add</span> Añadir
+            </button>
+          </div>
+          <div formArrayName="researcher_socials" class="space-y-3">
+            <div *ngFor="let soc of researcher_socials.controls; let i=index" [formGroupName]="i" class="flex items-center gap-3">
+              <select formControlName="social_network_id" class="w-40 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-secondary outline-none text-sm bg-white">
+                <option [ngValue]="null" disabled>Selecciona red...</option>
+                <option *ngFor="let net of allSocialNetworks" [value]="net.id" [disabled]="isSocialNetworkSelected(net.id, i)" [hidden]="isSocialNetworkSelected(net.id, i)">
+                  {{ net.name }}
+                </option>
+              </select>
+              <input type="url" formControlName="url_profile" class="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-secondary outline-none text-sm" placeholder="https://linkedin.com/in/... (URL Perfil)">
+              <button type="button" (click)="removeSocial(i)" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors">
+                <span class="material-icons text-sm">delete</span>
+              </button>
+            </div>
+            <p *ngIf="researcher_socials.length === 0" class="text-xs text-gray-500 italic">No se han añadido redes sociales.</p>
+          </div>
         </div>
 
         <div class="pt-6 flex justify-end gap-4 border-t border-gray-100">
@@ -103,11 +139,18 @@ export class ResearcherFormComponent implements OnInit {
     second_lastname: [''],
     institutional_email: ['', [Validators.required, Validators.email]],
     position: [''],
+    status: ['ACTIVE', Validators.required],
     orcid_link: [''],
-    biography: ['']
+    biography: [''],
+    researcher_socials: this.fb.array([])
   });
 
+  allSocialNetworks: any[] = [];
+
+  get researcher_socials() { return this.form.get('researcher_socials') as FormArray; }
+
   ngOnInit() {
+    this.loadSocialNetworks();
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.isEditing = true;
@@ -116,12 +159,54 @@ export class ResearcherFormComponent implements OnInit {
       }
     });
   }
+  loadSocialNetworks() {
+    this.http.get<any[]>('http://localhost:3000/api/social-networks').subscribe({
+      next: (data) => this.allSocialNetworks = data,
+      error: () => console.error('Error al cargar redes sociales')
+    });
+  }
+
+  isSocialNetworkSelected(networkId: number, currentIndex: number): boolean {
+    const selectedIds = this.researcher_socials.value.map((s: any, index: number) =>
+      index !== currentIndex ? Number(s.social_network_id) : null
+    );
+    return selectedIds.includes(Number(networkId));
+  }
+
+  addSocial() {
+    this.researcher_socials.push(this.fb.group({
+      social_network_id: [null, Validators.required],
+      url_profile: ['', Validators.required]
+    }));
+  }
+  removeSocial(index: number) { this.researcher_socials.removeAt(index); }
 
   loadResearcher(id: number) {
     this.isLoading = true;
     this.http.get<any>(`http://localhost:3000/api/researchers/${id}`).subscribe({
       next: (data) => {
-        this.form.patchValue(data);
+        this.form.patchValue({
+          first_name: data.first_name,
+          second_name: data.second_name,
+          first_lastname: data.first_lastname,
+          second_lastname: data.second_lastname,
+          institutional_email: data.institutional_email,
+          position: data.position,
+          status: data.status || 'ACTIVE',
+          orcid_link: data.orcid_link,
+          biography: data.biography
+        });
+
+        const socialsData = data.researcher_socials;
+        if (socialsData && Array.isArray(socialsData)) {
+          socialsData.forEach((soc: any) => {
+            this.researcher_socials.push(this.fb.group({
+              social_network_id: [soc.social_network_id, Validators.required],
+              url_profile: [soc.url_profile, Validators.required]
+            }));
+          });
+        }
+
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -140,29 +225,31 @@ export class ResearcherFormComponent implements OnInit {
     }
 
     this.isSubmitting = true;
-    const token = localStorage.getItem('auth_token');
-    const headers = { Authorization: `Bearer ${token}` };
-    const payload = this.form.value;
+    const payload = { ...this.form.value };
+    payload.researcher_socials = payload.researcher_socials.map((s: any) => ({
+      ...s,
+      social_network_id: Number(s.social_network_id)
+    }));
 
     if (this.isEditing) {
-      this.http.put(`http://localhost:3000/api/researchers/${this.editingId}`, payload, { headers }).subscribe({
+      this.http.patch(`http://localhost:3000/api/researchers/${this.editingId}`, payload).subscribe({
         next: () => {
           this.alertService.success('Actualizado', 'Investigador actualizado con éxito.');
           this.router.navigate(['/dashboard/researchers']);
         },
-        error: () => {
-          this.alertService.error('Error', 'No se pudo actualizar el registro.');
+        error: (err) => {
+          this.alertService.error('Error', err.error?.message || 'No se pudo actualizar el registro.');
           this.isSubmitting = false;
         }
       });
     } else {
-      this.http.post('http://localhost:3000/api/researchers', payload, { headers }).subscribe({
+      this.http.post('http://localhost:3000/api/researchers', payload).subscribe({
         next: () => {
           this.alertService.success('Creado', 'Investigador registrado con éxito.');
           this.router.navigate(['/dashboard/researchers']);
         },
-        error: () => {
-          this.alertService.error('Error', 'No se pudo crear el registro.');
+        error: (err) => {
+          this.alertService.error('Error', err.error?.message || 'No se pudo crear el registro.');
           this.isSubmitting = false;
         }
       });

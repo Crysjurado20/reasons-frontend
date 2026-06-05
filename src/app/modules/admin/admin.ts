@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AnimateOnScrollDirective } from '../../shared/directives/animate-on-scroll.directive';
 import { AlertService } from '../../shared/services/alert.service';
@@ -9,22 +9,28 @@ import { AlertService } from '../../shared/services/alert.service';
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AnimateOnScrollDirective],
+  imports: [CommonModule, ReactiveFormsModule, AnimateOnScrollDirective, RouterLink],
   templateUrl: './admin.html',
   styleUrl: './admin.scss',
 })
 export class Admin {
-  private fb = inject(FormBuilder);
-  private router = inject(Router);
-  private http = inject(HttpClient);
+  private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly http = inject(HttpClient);
 
-  private alertService = inject(AlertService);
+  private readonly alertService = inject(AlertService);
 
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     remember: [false]
   });
+
+  showPassword = false;
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
 
   isSubmitting = false;
 
@@ -41,8 +47,9 @@ export class Admin {
         .subscribe({
           next: (response) => {
             this.isSubmitting = false;
-            // Guardar token en localStorage
-            localStorage.setItem('auth_token', response.token);
+            // Guardar tokens utilizando AuthService (instanciado globalmente)
+            localStorage.setItem('access_token', response.accessToken);
+            localStorage.setItem('refresh_token', response.refreshToken);
             localStorage.setItem('user', JSON.stringify(response.user));
             
             // Mostrar alerta elegante

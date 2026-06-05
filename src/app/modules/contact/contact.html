@@ -58,6 +58,11 @@
             <p class="text-sm">¡Tu mensaje ha sido enviado con éxito! Nos pondremos en contacto contigo pronto.</p>
           </div>
           
+          <div *ngIf="submitError" class="bg-red-50 border-l-4 border-red-500 text-red-800 rounded-r-md p-4 flex items-start gap-3 mt-4 transition-all">
+            <span class="material-icons text-red-500">error</span>
+            <p class="text-sm">Hubo un problema al enviar tu mensaje. Por favor, inténtalo de nuevo más tarde o verifica la conexión con el servidor.</p>
+          </div>
+          
         </form>
       </div>
     </div>

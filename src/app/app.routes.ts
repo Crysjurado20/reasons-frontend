@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+  import { Routes } from '@angular/router';
 
 import { authGuard } from './core/guards/auth.guard';
 
@@ -9,6 +9,8 @@ export const routes: Routes = [
   { path: 'publicaciones', loadComponent: () => import('./modules/publications/publications').then(m => m.Publications) },
   { path: 'contacto', loadComponent: () => import('./modules/contact/contact').then(m => m.Contact) },
   { path: 'admin', loadComponent: () => import('./modules/admin/admin').then(m => m.Admin) },
+  { path: 'forgot-password', loadComponent: () => import('./modules/auth/forgot-password.component').then(m => m.ForgotPasswordComponent) },
+  { path: 'reset-password/:token', loadComponent: () => import('./modules/auth/reset-password.component').then(m => m.ResetPasswordComponent) },
   { 
     path: 'dashboard', 
     loadComponent: () => import('./modules/dashboard/dashboard.component').then(m => m.DashboardComponent),
@@ -25,7 +27,15 @@ export const routes: Routes = [
       
       { path: 'publications', loadComponent: () => import('./modules/dashboard/pages/publications.component').then(m => m.PublicationsDashboardComponent) },
       { path: 'publications/new', loadComponent: () => import('./modules/dashboard/pages/publication-form.component').then(m => m.PublicationFormComponent) },
-      { path: 'publications/edit/:id', loadComponent: () => import('./modules/dashboard/pages/publication-form.component').then(m => m.PublicationFormComponent) }
+      { path: 'publications/edit/:id', loadComponent: () => import('./modules/dashboard/pages/publication-form.component').then(m => m.PublicationFormComponent) },
+      
+      { path: 'settings', loadComponent: () => import('./modules/dashboard/pages/settings.component').then(m => m.SettingsComponent) },
+
+      { path: 'social-networks', loadComponent: () => import('./modules/dashboard/pages/social-networks.component').then(m => m.SocialNetworksDashboardComponent) },
+      { path: 'social-networks/new', loadComponent: () => import('./modules/dashboard/pages/social-network-form.component').then(m => m.SocialNetworkFormComponent) },
+      { path: 'social-networks/edit/:id', loadComponent: () => import('./modules/dashboard/pages/social-network-form.component').then(m => m.SocialNetworkFormComponent) },
+      
+      { path: 'settings', loadComponent: () => import('./modules/dashboard/pages/group-settings.component').then(m => m.GroupSettingsComponent) }
     ]
   },
   { path: '**', redirectTo: '' }

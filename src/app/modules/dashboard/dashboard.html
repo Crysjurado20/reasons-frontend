@@ -43,22 +43,38 @@
           <span class="material-icons">article</span>
           <span>Publicaciones</span>
         </a>
+        <a routerLink="/dashboard/settings" routerLinkActive="bg-white/10 border-l-4 border-secondary text-white"
+           (click)="closeSidebar()"
+           class="flex items-center space-x-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-all border-l-4 border-transparent">
+          <span class="material-icons">settings</span>
+          <span>Ajustes</span>
+        </a>
+        <a routerLink="/dashboard/social-networks" routerLinkActive="bg-white/10 border-l-4 border-secondary text-white"
+           (click)="closeSidebar()"
+           class="flex items-center space-x-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-all border-l-4 border-transparent">
+          <span class="material-icons">share</span>
+          <span>Redes Sociales</span>
+        </a>
+        <a routerLink="/dashboard/settings" routerLinkActive="bg-white/10 border-l-4 border-secondary text-white"
+           (click)="closeSidebar()"
+           class="flex items-center space-x-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-all border-l-4 border-transparent mt-4 bg-black/20">
+          <span class="material-icons">settings</span>
+          <span>Configuración</span>
+        </a>
       </nav>
     </div>
 
     <!-- User Profile -->
     <div class="p-4 border-t border-white/10 bg-black/10">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-primary font-bold">
-            {{ user?.name?.charAt(0) || 'A' }}
-          </div>
-          <div class="overflow-hidden">
-            <p class="text-sm font-semibold truncate">{{ user?.name || 'Admin' }}</p>
-            <p class="text-xs text-white/50 truncate">{{ user?.email || 'admin@reasons.ec' }}</p>
-          </div>
+      <div class="flex items-center space-x-2">
+        <div class="w-10 h-10 flex-shrink-0 rounded-full bg-secondary flex items-center justify-center text-primary font-bold">
+          {{ user?.name?.charAt(0) || 'A' }}
         </div>
-        <button (click)="logout()" class="text-white/50 hover:text-red-400 transition-colors p-2" title="Cerrar Sesión">
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold truncate">{{ user?.name || 'Admin' }}</p>
+          <p class="text-xs text-white/50 truncate">{{ user?.email || 'admin@reasons.ec' }}</p>
+        </div>
+        <button (click)="logout()" class="text-white/50 hover:text-red-400 transition-colors p-2 flex-shrink-0" title="Cerrar Sesión">
           <span class="material-icons">logout</span>
         </button>
       </div>

@@ -1,4 +1,4 @@
-import { Component, inject, signal, HostListener } from '@angular/core';
+import { Component, inject, signal, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 
@@ -8,8 +8,8 @@ import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/rou
   imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './dashboard.html',
 })
-export class DashboardComponent {
-  private router = inject(Router);
+export class DashboardComponent implements OnInit {
+  private readonly router = inject(Router);
   user: any = null;
   sidebarOpen = signal(false);
   isDesktop = signal(window.innerWidth >= 768);
