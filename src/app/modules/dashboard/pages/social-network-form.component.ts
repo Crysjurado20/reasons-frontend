@@ -30,14 +30,19 @@ import { AlertService } from '../../../shared/services/alert.service';
         
         <div class="space-y-2">
           <label class="text-sm font-semibold text-gray-700">Nombre de la Red <span class="text-red-500">*</span></label>
-          <input type="text" formControlName="name" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all" placeholder="Ej. LinkedIn, ORCID, ResearchGate...">
+          <input type="text" formControlName="name" 
+                 [ngClass]="{'border-red-500 focus:ring-red-200 focus:border-red-500': isFieldInvalid('name')}"
+                 class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all" placeholder="Ej. LinkedIn, ORCID, ResearchGate...">
         </div>
 
         <div class="space-y-2">
-          <label class="text-sm font-semibold text-gray-700">URL del Ícono/Logo</label>
-          <input type="url" formControlName="url_image" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all" placeholder="https://ruta-de-la-imagen.com/logo.png">
+          <label class="text-sm font-semibold text-gray-700">URL del Ícono/Logo (Opcional)</label>
+          <input type="url" formControlName="url_image" 
+                 [ngClass]="{'border-red-500 focus:ring-red-200 focus:border-red-500': isFieldInvalid('url_image')}"
+                 class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all" placeholder="https://ruta-de-la-imagen.com/logo.png">
+          <p *ngIf="form.get('url_image')?.hasError('pattern') && form.get('url_image')?.touched" class="text-xs text-red-500 font-medium">Debe ingresar una URL de enlace válida (http:// o https://).</p>
           
-          <div *ngIf="form.get('url_image')?.value" class="mt-3 flex items-center gap-3 bg-gray-50 p-3 rounded-lg border border-gray-100 w-max">
+          <div *ngIf="form.get('url_image')?.value && form.get('url_image')?.valid" class="mt-3 flex items-center gap-3 bg-gray-50 p-3 rounded-lg border border-gray-100 w-max">
             <span class="text-xs text-gray-500 font-medium">Previsualización (24x24px):</span>
             <img [src]="form.get('url_image')?.value" class="w-6 h-6 object-cover rounded-sm border border-gray-200" alt="Logo preview">
           </div>
@@ -45,7 +50,8 @@ import { AlertService } from '../../../shared/services/alert.service';
 
         <div class="pt-6 flex justify-end gap-4 border-t border-gray-100">
           <a routerLink="/dashboard/social-networks" class="px-6 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 font-medium transition-colors">Cancelar</a>
-          <button type="submit" [disabled]="isSubmitting" class="px-8 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 shadow-md transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
+          <button type="submit" [disabled]="form.invalid || isSubmitting" 
+                  class="px-8 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 shadow-md transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
             <span *ngIf="isSubmitting" class="material-icons animate-spin text-sm">refresh</span>
             <span>{{ isEditing ? 'Actualizar Cambios' : 'Guardar Red Social' }}</span>
           </button>
@@ -67,9 +73,12 @@ export class SocialNetworkFormComponent implements OnInit {
   isLoading = false;
   isSubmitting = false;
 
+  // Regex definitiva para URLs, puertos locales y strings de consulta complejos
+  private readonly urlPattern = /^(https?:\/\/)?(localhost|[\da-z.-]+\.[a-z.]{2,6})(:[0-9]{1,5})?(\/[\/\w\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e.-]*)*\/?$/i;
+
   form: FormGroup = this.fb.group({
     name: ['', Validators.required],
-    url_image: ['']
+    url_image: ['', [Validators.pattern(this.urlPattern)]] // Validado con la regex corregida
   });
 
   ngOnInit() {
@@ -82,13 +91,18 @@ export class SocialNetworkFormComponent implements OnInit {
     });
   }
 
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.form.get(fieldName);
+    return !!(field && field.invalid && field.touched);
+  }
+
   loadData(id: number) {
     this.isLoading = true;
     this.http.get<any>(`http://localhost:3000/api/social-networks/${id}`).subscribe({
       next: (data) => {
         this.form.patchValue({
           name: data.name,
-          url_image: data.url_image
+          url_image: data.url_image || ''
         });
         this.isLoading = false;
         this.cdr.detectChanges();
@@ -108,7 +122,13 @@ export class SocialNetworkFormComponent implements OnInit {
     }
 
     this.isSubmitting = true;
-    const payload = this.form.value;
+    const rawValues = this.form.value;
+
+    // Saneamiento de campos: si va vacío string "", convertimos a NULL para evitar colisiones en DB
+    const payload = {
+      ...rawValues,
+      url_image: rawValues.url_image?.trim() === "" ? null : rawValues.url_image
+    };
 
     const request = this.isEditing 
       ? this.http.patch(`http://localhost:3000/api/social-networks/${this.editingId}`, payload)
